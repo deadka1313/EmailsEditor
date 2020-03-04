@@ -16,6 +16,10 @@ coverage
 lib/
 node_modules/
 
+# builds
+build
+dist
+
 # dotenv environment variables file
 .env
 .env.test

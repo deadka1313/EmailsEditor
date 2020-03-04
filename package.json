@@ -1,41 +1,67 @@
 {
-  "name": "emailseditor",
-  "version": "0.1.0",
-  "description": "Emails editor",
-  "main": "lib/index.js",
-  "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
-    "lint": "eslint **/{src,test}/**/*.ts*",
-    "test": "jest"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run lint && npm run test"
+    "name": "emailseditor",
+    "version": "0.1.0",
+    "description": "Emails editor",
+    "main": "dist/index.js",
+    "module": "dist/index.es.js",
+    "jsnext:main": "dist/index.es.js",
+    "engines": {
+        "node": ">=8",
+        "npm": ">=5"
+    },
+    "scripts": {
+        "build": "rollup -c",
+        "start": "rollup -c -w && npm run prettier-watch",
+        "prepare": "npm run build",
+        "prettier": "prettier --write src/* test/*",
+        "prettier-watch": "onchange 'src/**/*' -- prettier --write {{changed}}",
+        "lint": "eslint src/**/* --ext .ts,.tsx --fix",
+        "test": "npm run lint && jest"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/deadka1313/EmailsEditor.git"
+    },
+    "author": "deadka1313 (MalyshevAV)",
+    "license": "(ISC) MIT",
+    "bugs": {
+        "url": "https://github.com/deadka1313/EmailsEditor/issues"
+    },
+    "homepage": "https://github.com/deadka1313/EmailsEditor#readme",
+    "devDependencies": {
+        "@rollup/plugin-commonjs": "^11.0.2",
+        "@rollup/plugin-url": "^4.0.2",
+        "@svgr/rollup": "^5.2.0",
+        "@types/jest": "^25.1.3",
+        "@types/node": "^13.7.7",
+        "@typescript-eslint/eslint-plugin": "^2.22.0",
+        "@typescript-eslint/parser": "^2.22.0",
+        "eslint": "^6.8.0",
+        "eslint-config-prettier": "^6.10.0",
+        "eslint-plugin-prettier": "^3.1.2",
+        "husky": "^3.1.0",
+        "jest": "^25.1.0",
+        "lint-staged": "^9.4.3",
+        "onchange": "6.1.0",
+        "prettier": "^1.19.1",
+        "rollup": "^1.32.0",
+        "rollup-plugin-babel": "^4.3.3",
+        "rollup-plugin-node-resolve": "^5.2.0",
+        "rollup-plugin-peer-deps-external": "^2.2.2",
+        "rollup-plugin-postcss": "^2.1.1",
+        "rollup-plugin-typescript2": "^0.26.0",
+        "ts-jest": "^25.2.1",
+        "typescript": "^3.8.3"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged"
+        }
+    },
+    "lint-staged": {
+        "*.{js,ts,tsx,css,json,md}": [
+            "prettier --write",
+            "git add"
+        ]
     }
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deadka1313/EmailsEditor.git"
-  },
-  "author": "deadka1313 (MalyshevAV)",
-  "license": "(ISC) MIT",
-  "bugs": {
-    "url": "https://github.com/deadka1313/EmailsEditor/issues"
-  },
-  "homepage": "https://github.com/deadka1313/EmailsEditor#readme",
-  "devDependencies": {
-    "@types/jest": "^25.1.3",
-    "@types/node": "^13.7.7",
-    "@typescript-eslint/eslint-plugin": "^2.22.0",
-    "@typescript-eslint/parser": "^2.22.0",
-    "eslint": "^6.8.0",
-    "eslint-config-prettier": "^6.10.0",
-    "eslint-plugin-prettier": "^3.1.2",
-    "husky": "^3.0.9",
-    "jest": "^25.1.0",
-    "prettier": "^1.19.1",
-    "ts-jest": "^25.2.1",
-    "typescript": "^3.8.3"
-  }
 }
