@@ -7,9 +7,7 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "lint": "eslint **/{src,test}/**/*.ts*",
-    "test": "jest",
-    "precommit": "npm lint",
-    "prepush": "npm test"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
