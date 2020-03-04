@@ -1,0 +1,24 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+/package-lock.json
+
+# Coverage directory used by tools like istanbul
+coverage
+*.lcov
+
+# Dependency directories
+lib/
+node_modules/
+
+# dotenv environment variables file
+.env
+.env.test
+
+# IDE
+.idea
