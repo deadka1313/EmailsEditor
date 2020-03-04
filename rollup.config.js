@@ -23,6 +23,11 @@ export default {
             exports: 'named',
             sourcemap: true,
         },
+        {
+            file: 'dist/index.min.js',
+            format: 'iife',
+            name: 'EmailsEditor',
+        },
     ],
     plugins: [
         external(),

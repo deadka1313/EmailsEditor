@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Example</title>
+        <meta charset="UTF-8"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+        <!-- CSS -->
+        <link rel="stylesheet" type="text/css" href="../dist/index.min.css"/>
+        <link rel="stylesheet" type="text/css" href="./index.css"/>
+        <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
+    </head>
+
+    <body id="body">
+
+        <div class="parent">
+            <div class="example-form">
+                <div class="example-form_main-block">
+                    <div class="example-form_header">Share <span class="example-form_header__bold">Board name</span> with others</div>
+                    <div id="emails-input"></div>
+                </div>
+                <div class="example-form_footer">
+                    <button class="example-button">Add email</button>
+                    <button class="example-button">Get emails count</button>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript" src="../dist/index.min.js"></script>
+        <script>
+          const inputContainerNode = document.querySelector('#emails-input');
+          console.log('1', inputContainerNode);
+          EmailsEditor(inputContainerNode);
+        </script>
+
+    </body>
+
+</html>

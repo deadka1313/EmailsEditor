@@ -1,5 +1,5 @@
-import { helloWorld } from '../src';
+// import createEmailForm from '../src';
 
 test('Should return helloWorld', () => {
-    expect(helloWorld()).toBe('Hello world!');
+    // expect(createEmailForm()).toBe('Hello world!');
 });
