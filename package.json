@@ -7,13 +7,15 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "lint": "eslint **/{src,test}/**/*.ts*",
-    "test": "jest"
+    "test": "jest",
+    "precommit": "npm lint",
+    "prepush": "npm test"
   },
   "husky": {
     "hooks": {
       "pre-commit": "npm run lint",
       "pre-push": "npm run test",
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
   },
   "repository": {
