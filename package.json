@@ -6,13 +6,12 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "lint": "eslint **/{src,test}/**/*.ts* --fix",
+    "lint": "eslint **/{src,test}/**/*.ts*",
     "test": "jest"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm test",
-      "pre-push": "npm test"
+      "pre-commit": "npm run lint"
     }
   },
   "repository": {
