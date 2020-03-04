@@ -18,7 +18,7 @@ node_modules/
 
 # builds
 build
-dist
+#dist
 
 # dotenv environment variables file
 .env
