@@ -11,13 +11,6 @@
     "precommit": "npm lint",
     "prepush": "npm test"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run lint",
-      "pre-push": "npm run test",
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-    }
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/deadka1313/EmailsEditor.git"
