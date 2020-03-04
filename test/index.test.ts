@@ -1,5 +1,5 @@
 import { helloWorld } from '../src';
 
 test('Should return helloWorld', () => {
-    expect(helloWorld()).toBe('Hello worlds!');
+    expect(helloWorld()).toBe('Hello world!');
 });
