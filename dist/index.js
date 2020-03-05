@@ -5,11 +5,16 @@ Object.defineProperty(exports, '__esModule', { value: true });
 var CreateEmailForm = /** @class */ (function () {
     function CreateEmailForm(element) {
         var _this = this;
+        this.validEmails = [];
         this.setHtmlForm = function () {
             _this.element.innerHTML =
                 '<div class="emails-editor_form">' +
-                    '<div class="emails-editor_input" contenteditable="true">' +
-                    '</div>' +
+                    '<span class="emails-editor_email emails-editor_email__valid">john@miro.com</span>' +
+                    '<span class="emails-editor_email emails-editor_email__invalid">invalid.email</span>' +
+                    '<span class="emails-editor_email emails-editor_email__valid">mike@miro.com</span>' +
+                    '<span class="emails-editor_email emails-editor_email__valid">alexander@miro.com</span>' +
+                    '<span class="emails-editor_input" contenteditable="true">' +
+                    '</span>' +
                     '<span class="emails-editor_placeholder">add more people…</span>' +
                     '</div>';
             var divForm = _this.element.querySelector('.emails-editor_form');
@@ -22,7 +27,7 @@ var CreateEmailForm = /** @class */ (function () {
             }
         };
         this.setFocusInput = function () {
-            var div = _this.element.querySelector('div.emails-editor_input');
+            var div = _this.element.querySelector('span.emails-editor_input');
             if (div instanceof HTMLElement) {
                 div.focus();
             }
@@ -37,7 +42,7 @@ var CreateEmailForm = /** @class */ (function () {
         return 'setEmail';
     };
     CreateEmailForm.prototype.getEmail = function () {
-        return 'getEmail';
+        return this.validEmails;
     };
     return CreateEmailForm;
 }());
