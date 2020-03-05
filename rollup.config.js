@@ -7,6 +7,7 @@ import svgr from '@svgr/rollup';
 import pkg from './package.json';
 import url from '@rollup/plugin-url';
 import commonjs from '@rollup/plugin-commonjs';
+import autoprefixer from 'autoprefixer';
 
 export default {
     input: 'src/index.ts',
@@ -32,6 +33,7 @@ export default {
     plugins: [
         external(),
         postcss({
+            plugins: [autoprefixer],
             modules: false,
             extract: true,
             minimize: true,

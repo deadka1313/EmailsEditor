@@ -22,8 +22,8 @@
                     <div id="emails-input"></div>
                 </div>
                 <div class="example-form_footer">
-                    <button class="example-button">Add email</button>
-                    <button class="example-button">Get emails count</button>
+                    <button class="example-button" onclick="setEmail()">Add email</button>
+                    <button class="example-button" onclick="getEmail()">Get emails count</button>
                 </div>
             </div>
         </div>
@@ -31,8 +31,13 @@
         <script type="text/javascript" src="../dist/index.min.js"></script>
         <script>
           const inputContainerNode = document.querySelector('#emails-input');
-          console.log('1', inputContainerNode);
-          EmailsEditor(inputContainerNode);
+          const emailsEditor = new EmailsEditor(inputContainerNode);
+          function setEmail() {
+            console.log(emailsEditor.setEmail())
+          }
+          function getEmail() {
+            console.log(emailsEditor.getEmail())
+          }
         </script>
 
     </body>

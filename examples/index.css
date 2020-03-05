@@ -19,11 +19,13 @@ body {
     height: 300px;
     margin: auto;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
 }
 
 .example-form_header {
     font-size: 20px;
     line-height: 27px;
+    margin-bottom: 24px;
 }
 
 .example-form_header__bold {

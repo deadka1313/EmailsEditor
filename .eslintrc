@@ -15,6 +15,11 @@
     "sourceType": "module"
   },
   "rules": {
-    // other
+    "@typescript-eslint/interface-name-prefix": [
+      "error",
+      {
+        "prefixWithI": "always"
+      }
+    ]
   }
 }

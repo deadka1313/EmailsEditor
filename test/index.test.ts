@@ -1,5 +1,14 @@
-// import createEmailForm from '../src';
+import CreateEmailForm from '../src';
+import '@testing-library/jest-dom';
 
-test('Should return helloWorld', () => {
-    // expect(createEmailForm()).toBe('Hello world!');
+describe('Test CreateEmailForm', () => {
+    const div = document.createElement('div');
+    const createEmailForm = new CreateEmailForm(div);
+
+    test('test setEmail', () => {
+        expect(createEmailForm.setEmail()).toBe('setEmail');
+    });
+    test('test getEmail', () => {
+        expect(createEmailForm.getEmail()).toBe('getEmail');
+    });
 });
