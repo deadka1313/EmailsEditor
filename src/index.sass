@@ -5,7 +5,7 @@ $backgroundColor: #FFFFFF
     background: $backgroundColor
     border: 1px solid #C3C2CF
     border-radius: 4px
-    height: 96px
+    height: 80px
     overflow-y: auto
     padding: 8px 7px
     cursor: text
@@ -20,6 +20,18 @@ $backgroundColor: #FFFFFF
     color: #C3C2CF
     font-size: 14px
     line-height: 24px
+    margin-left: -7px
+  &_closebtn
+    margin-left: 7px
+    color: black
+    font-weight: bold
+    float: right
+    font-size: 16px
+    line-height: 20px
+    cursor: pointer
+    transition: 0.3s
+    &:hover
+      color: white
   &_email
     font-size: 14px
     margin-right: 8px
@@ -28,7 +40,7 @@ $backgroundColor: #FFFFFF
     &__valid
       background: rgba(102, 153, 255, 0.2)
       border-radius: 100px
-      padding: 5px 10px
+      padding: 2px 9px
     &__invalid
       border-bottom: 1px dashed #D92929
       padding: 1px 0

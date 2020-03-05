@@ -4,6 +4,12 @@ body {
     font-weight: normal;
 }
 
+button,
+button:active,
+button:focus {
+    outline: none;
+}
+
 .parent {
     width: 100%;
     height: 100%;

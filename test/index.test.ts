@@ -1,5 +1,4 @@
 import CreateEmailForm from '../src';
-import '@testing-library/jest-dom';
 
 describe('Test CreateEmailForm', () => {
     const div = document.createElement('div');
