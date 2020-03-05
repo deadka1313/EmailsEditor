@@ -9,6 +9,6 @@ describe('Test CreateEmailForm', () => {
         expect(createEmailForm.setEmail()).toBe('setEmail');
     });
     test('test getEmail', () => {
-        expect(createEmailForm.getEmail()).toBe('getEmail');
+        expect(createEmailForm.getEmail().length).toBe(0);
     });
 });

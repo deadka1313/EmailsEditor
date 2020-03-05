@@ -27,6 +27,7 @@
                 </div>
             </div>
         </div>
+        <div id="example-alert"></div>
 
         <script type="text/javascript" src="../dist/index.min.js"></script>
         <script>
@@ -36,7 +37,12 @@
             console.log(emailsEditor.setEmail())
           }
           function getEmail() {
-            console.log(emailsEditor.getEmail())
+            const emails =  emailsEditor.getEmail();
+            let emailsAlertString = emailsEditor.getEmail().length;
+            for( let i = 0; i < emails.length; i++) {
+              emailsAlertString += ' ' + emails[i];
+            }
+            alert(emailsAlertString);
           }
         </script>
 

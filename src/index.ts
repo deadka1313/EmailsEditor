@@ -4,11 +4,17 @@ import { ICreateEmailForm } from './ICreateEmailForm';
 export default class CreateEmailForm implements ICreateEmailForm {
     private element: HTMLElement;
 
+    private validEmails: string[] = [];
+
     private setHtmlForm = (): void => {
         this.element.innerHTML =
             '<div class="emails-editor_form">' +
-            '<div class="emails-editor_input" contenteditable="true">' +
-            '</div>' +
+            '<span class="emails-editor_email emails-editor_email__valid">john@miro.com</span>' +
+            '<span class="emails-editor_email emails-editor_email__invalid">invalid.email</span>' +
+            '<span class="emails-editor_email emails-editor_email__valid">mike@miro.com</span>' +
+            '<span class="emails-editor_email emails-editor_email__valid">alexander@miro.com</span>' +
+            '<span class="emails-editor_input" contenteditable="true">' +
+            '</span>' +
             '<span class="emails-editor_placeholder">add more people…</span>' +
             '</div>';
         const divForm = this.element.querySelector('.emails-editor_form');
@@ -22,7 +28,7 @@ export default class CreateEmailForm implements ICreateEmailForm {
     };
 
     private setFocusInput = (): void => {
-        const div = this.element.querySelector('div.emails-editor_input');
+        const div = this.element.querySelector('span.emails-editor_input');
         if (div instanceof HTMLElement) {
             div.focus();
         }
@@ -41,7 +47,7 @@ export default class CreateEmailForm implements ICreateEmailForm {
         return 'setEmail';
     }
 
-    public getEmail(): string {
-        return 'getEmail';
+    public getEmail(): string[] {
+        return this.validEmails;
     }
 }
