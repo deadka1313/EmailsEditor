@@ -7,7 +7,6 @@ export default class CreateEmailForm implements ICreateEmailForm {
     private readonly element: HTMLElement;
     private readonly placeholderElement: HTMLElement | null = null;
 
-    private isPasteAndEnter = false;
     private isEdit = false;
 
     private emails: IEmailsIsValid[] = [];
@@ -81,8 +80,7 @@ export default class CreateEmailForm implements ICreateEmailForm {
                     divInput.innerHTML = '';
                 }
             }
-            if ((value && value.length > 1 && this.checkEnterWord(value)) || this.isPasteAndEnter) {
-                this.isPasteAndEnter = false;
+            if (value && value.length > 1 && this.checkEnterWord(value)) {
                 this.addEmail(value);
             }
         }
@@ -175,7 +173,10 @@ export default class CreateEmailForm implements ICreateEmailForm {
 
         const divInput = this.element.querySelector('.emails-editor_input');
         if (divInput) {
-            divInput.addEventListener('input', e => this.onChangeInput(e));
+            // fix IE 11
+            const inputEventType = /Trident/.test(navigator.userAgent) ? 'textinput' : 'input';
+
+            divInput.addEventListener(inputEventType, e => this.onChangeInput(e));
             divInput.addEventListener('focus', () => this.onFocusInput());
             divInput.addEventListener('blur', e => this.onBlurInput(e));
             divInput.addEventListener('keydown', e => {
@@ -183,7 +184,13 @@ export default class CreateEmailForm implements ICreateEmailForm {
                     (e as KeyboardEvent).key === 'Enter' ||
                     (((e as KeyboardEvent).ctrlKey || (e as KeyboardEvent).metaKey) && (e as KeyboardEvent).key === 'v')
                 ) {
-                    this.isPasteAndEnter = true;
+                    // for IE 11
+                    const divInput = this.element.querySelector('.emails-editor_input');
+                    if (divInput) {
+                        const inputText = divInput.innerHTML;
+                        inputText && this.addEmail(inputText);
+                        divInput.innerHTML = '';
+                    }
                 }
             });
         }

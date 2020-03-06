@@ -32,3 +32,9 @@ emailsEditor.setEmail('email@mail.com');
 // get array valid emails
 emailsEditor.getEmail();
 ```
+
+## BAGS
+
+Elimination of a bug in the subject during the decision process
+
+1. if press enter in ie
