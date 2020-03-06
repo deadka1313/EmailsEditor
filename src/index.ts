@@ -82,7 +82,7 @@ export default class CreateEmailForm implements ICreateEmailForm {
         console.log(e);
     };
 
-    private checkEnterWord = (value: string) => {
+    private checkEnterWord = (value: string): boolean => {
         return /[\s,]/g.test(value);
     };
 
