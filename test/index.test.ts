@@ -9,10 +9,15 @@ describe('Test CreateEmailForm', () => {
     });
 
     test('test setEmail', () => {
-        const newEmail = 'asdsad@.mail.com';
-        createEmailForm.setEmail(newEmail);
+        const validEmail = 'asdsad@mail.com';
+        const invalidEmail = 'asdsadsad';
+
+        createEmailForm.setEmail(validEmail);
         const emails = createEmailForm.getEmail();
-        expect(emails.find(item => item === newEmail)).toBe(newEmail);
+        expect(emails.find(item => item === validEmail)).toBe(validEmail);
+        expect(createEmailForm.getEmail().length).toBe(1);
+
+        createEmailForm.setEmail(invalidEmail);
         expect(createEmailForm.getEmail().length).toBe(1);
     });
 });

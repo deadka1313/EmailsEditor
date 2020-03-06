@@ -1,10 +1,14 @@
 import './index.sass';
 import { ICreateEmailForm } from './ICreateEmailForm';
 import { IEmailsIsValid } from './IEmailsIsValid';
+import { checkregularEmail } from './constants';
 
 export default class CreateEmailForm implements ICreateEmailForm {
-    private element: HTMLElement;
-    private placeholderElement: HTMLElement | null = null;
+    private readonly element: HTMLElement;
+    private readonly placeholderElement: HTMLElement | null = null;
+
+    private isPaste = false;
+    private isEdit = false;
 
     private emails: IEmailsIsValid[] = [];
 
@@ -29,6 +33,10 @@ export default class CreateEmailForm implements ICreateEmailForm {
                 '<span class="emails-editor_closebtn">&times;</span>' +
                 '</span>';
         });
+        const divForm = this.element.querySelector('.emails-editor_form');
+        if (divForm) {
+            divForm.scrollTop = divForm.scrollHeight;
+        }
         return emailDom;
     };
 
@@ -39,8 +47,10 @@ export default class CreateEmailForm implements ICreateEmailForm {
             (e.target as HTMLTextAreaElement).className.indexOf('emails-editor_input') === -1 &&
             (e.target as HTMLTextAreaElement).className.indexOf('emails-editor_closebtn') === -1 &&
             (e.target as HTMLTextAreaElement).className.indexOf('emails-editor_email') === -1 &&
+            !this.isEdit &&
             div instanceof HTMLElement
         ) {
+            this.isEdit = true;
             div.focus();
             const range = document.createRange();
             range.selectNodeContents(div);
@@ -53,6 +63,13 @@ export default class CreateEmailForm implements ICreateEmailForm {
         }
     };
 
+    private onFocusInput = (): void => {
+        if (this.placeholderElement) {
+            this.placeholderElement.style.display = 'none';
+            this.isEdit = false;
+        }
+    };
+
     private onChangeInput = (e: Event | null): void => {
         if (e) {
             const value = (e.target as HTMLTextAreaElement).innerText;
@@ -62,15 +79,10 @@ export default class CreateEmailForm implements ICreateEmailForm {
                     divInput.innerHTML = '';
                 }
             }
-            if (value && value.length > 1 && this.checkEnterWord(value)) {
+            if ((value && value.length > 1 && this.checkEnterWord(value)) || this.isPaste) {
+                this.isPaste = false;
                 this.addEmail(value);
             }
-        }
-    };
-
-    private onFocusInput = (): void => {
-        if (this.placeholderElement) {
-            this.placeholderElement.style.display = 'none';
         }
     };
 
@@ -91,8 +103,15 @@ export default class CreateEmailForm implements ICreateEmailForm {
     };
 
     private addEmail = (email: string): void => {
-        // const inputEmails = email.replace(/(^\s*)|(\s*)$/g, '');
-        const newEmails: IEmailsIsValid[] = [{ name: email, isValid: true }];
+        let inputEmails: string = email.replace(/(^\s*)|(\s*)$/g, '');
+        inputEmails = inputEmails.replace(/(,\s*)$/g, ',');
+        const inputEmailsSplit: string[] = inputEmails.split(/\s|,/).filter(item => item);
+        const newEmails: IEmailsIsValid[] = inputEmailsSplit.map(item => {
+            return {
+                name: item,
+                isValid: this.checkValid(item),
+            };
+        });
         newEmails.map(item => {
             if (!this.checkForMatch(item.name)) {
                 this.emails.push(item);
@@ -105,6 +124,11 @@ export default class CreateEmailForm implements ICreateEmailForm {
         }
 
         this.updateDom();
+    };
+
+    private checkValid = (email: string) => {
+        const pattern = new RegExp(checkregularEmail);
+        return pattern.test(email);
     };
 
     private removeEmail = (e: Event | null): void => {
@@ -145,7 +169,6 @@ export default class CreateEmailForm implements ICreateEmailForm {
         const divForm = this.element.querySelector('.emails-editor_form');
         if (divForm) {
             divForm.addEventListener('click', e => this.setFocusInput(e));
-            divForm.scrollTop = divForm.scrollHeight;
         }
 
         const divInput = this.element.querySelector('.emails-editor_input');
@@ -153,6 +176,14 @@ export default class CreateEmailForm implements ICreateEmailForm {
             divInput.addEventListener('input', e => this.onChangeInput(e));
             divInput.addEventListener('focus', () => this.onFocusInput());
             divInput.addEventListener('blur', e => this.onBlurInput(e));
+            divInput.addEventListener('keydown', e => {
+                if (
+                    ((e as KeyboardEvent).ctrlKey || (e as KeyboardEvent).metaKey) &&
+                    (e as KeyboardEvent).key === 'v'
+                ) {
+                    this.isPaste = true;
+                }
+            });
         }
     }
 
