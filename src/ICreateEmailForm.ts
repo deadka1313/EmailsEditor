@@ -1,7 +1,5 @@
-import { IEmailsIsValid } from './IEmailsIsValid';
-
 export interface ICreateEmailForm {
-    setEmail(): string;
+    setEmail(email: string): void;
 
-    getEmail(): IEmailsIsValid[];
+    getEmail(): string[];
 }
