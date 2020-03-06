@@ -1,4 +1,4 @@
-# EmailsEditor v0.1.0
+# EmailsEditor v0.1.1
 
 ## example code
 
