@@ -9,7 +9,6 @@ var CreateEmailForm = /** @class */ (function () {
     function CreateEmailForm(element) {
         var _this = this;
         this.placeholderElement = null;
-        this.isPasteAndEnter = false;
         this.isEdit = false;
         this.emails = [];
         this.updateDom = function (isRemove) {
@@ -77,8 +76,7 @@ var CreateEmailForm = /** @class */ (function () {
                         divInput.innerHTML = '';
                     }
                 }
-                if ((value && value.length > 1 && _this.checkEnterWord(value)) || _this.isPasteAndEnter) {
-                    _this.isPasteAndEnter = false;
+                if (value && value.length > 1 && _this.checkEnterWord(value)) {
                     _this.addEmail(value);
                 }
             }
@@ -157,13 +155,21 @@ var CreateEmailForm = /** @class */ (function () {
         }
         var divInput = this.element.querySelector('.emails-editor_input');
         if (divInput) {
-            divInput.addEventListener('input', function (e) { return _this.onChangeInput(e); });
+            // fix IE 11
+            var inputEventType = /Trident/.test(navigator.userAgent) ? 'textinput' : 'input';
+            divInput.addEventListener(inputEventType, function (e) { return _this.onChangeInput(e); });
             divInput.addEventListener('focus', function () { return _this.onFocusInput(); });
             divInput.addEventListener('blur', function (e) { return _this.onBlurInput(e); });
             divInput.addEventListener('keydown', function (e) {
                 if (e.key === 'Enter' ||
                     ((e.ctrlKey || e.metaKey) && e.key === 'v')) {
-                    _this.isPasteAndEnter = true;
+                    // for IE 11
+                    var divInput_1 = _this.element.querySelector('.emails-editor_input');
+                    if (divInput_1) {
+                        var inputText = divInput_1.innerHTML;
+                        inputText && _this.addEmail(inputText);
+                        divInput_1.innerHTML = '';
+                    }
                 }
             });
         }
