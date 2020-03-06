@@ -3,7 +3,7 @@ import { ICreateEmailForm } from './ICreateEmailForm';
 export default class CreateEmailForm implements ICreateEmailForm {
     private readonly element;
     private readonly placeholderElement;
-    private isPaste;
+    private isPasteAndEnter;
     private isEdit;
     private emails;
     private updateDom;
@@ -16,7 +16,7 @@ export default class CreateEmailForm implements ICreateEmailForm {
     private addEmail;
     private checkValid;
     private removeEmail;
-    private checkForMatch;
+    private checkForCoincidence;
     private checkValidEmailsStore;
     constructor(element: HTMLElement);
     setEmail(email: string): void;

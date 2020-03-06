@@ -115,7 +115,7 @@ export default class CreateEmailForm implements ICreateEmailForm {
             };
         });
         newEmails.map(item => {
-            if (!this.checkForMatch(item.name)) {
+            if (!this.checkForCoincidence(item.name)) {
                 this.emails.push(item);
             }
         });
@@ -141,7 +141,7 @@ export default class CreateEmailForm implements ICreateEmailForm {
         }
     };
 
-    private checkForMatch = (email: string): boolean => {
+    private checkForCoincidence = (email: string): boolean => {
         for (let i = 0; i < this.emails.length; i++) {
             if (this.emails[i].name === email) {
                 return true;

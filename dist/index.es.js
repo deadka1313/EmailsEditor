@@ -5,13 +5,14 @@ var CreateEmailForm = /** @class */ (function () {
     function CreateEmailForm(element) {
         var _this = this;
         this.placeholderElement = null;
-        this.isPaste = false;
+        this.isPasteAndEnter = false;
         this.isEdit = false;
         this.emails = [];
-        this.updateDom = function () {
+        this.updateDom = function (isRemove) {
+            if (isRemove === void 0) { isRemove = false; }
             var wrapperElement = _this.element.querySelector('.email-editor_wrapper-emails');
             if (wrapperElement) {
-                wrapperElement.innerHTML = _this.generateEmailsDom();
+                wrapperElement.innerHTML = _this.generateEmailsDom(isRemove);
                 var emailElements = _this.element.querySelectorAll('.emails-editor_closebtn');
                 for (var i = 0; i < emailElements.length; i++) {
                     var emailElement = emailElements[i];
@@ -19,7 +20,8 @@ var CreateEmailForm = /** @class */ (function () {
                 }
             }
         };
-        this.generateEmailsDom = function () {
+        this.generateEmailsDom = function (isRemove) {
+            if (isRemove === void 0) { isRemove = false; }
             var emailDom = '';
             _this.emails.map(function (item) {
                 emailDom +=
@@ -28,9 +30,11 @@ var CreateEmailForm = /** @class */ (function () {
                         '<span class="emails-editor_closebtn">&times;</span>' +
                         '</span>';
             });
-            var divForm = _this.element.querySelector('.emails-editor_form');
-            if (divForm) {
-                divForm.scrollTop = divForm.scrollHeight;
+            if (!isRemove) {
+                var divForm = _this.element.querySelector('.emails-editor_form');
+                if (divForm) {
+                    divForm.scrollTop = divForm.scrollHeight;
+                }
             }
             return emailDom;
         };
@@ -69,8 +73,8 @@ var CreateEmailForm = /** @class */ (function () {
                         divInput.innerHTML = '';
                     }
                 }
-                if ((value && value.length > 1 && _this.checkEnterWord(value)) || _this.isPaste) {
-                    _this.isPaste = false;
+                if ((value && value.length > 1 && _this.checkEnterWord(value)) || _this.isPasteAndEnter) {
+                    _this.isPasteAndEnter = false;
                     _this.addEmail(value);
                 }
             }
@@ -100,7 +104,7 @@ var CreateEmailForm = /** @class */ (function () {
                 };
             });
             newEmails.map(function (item) {
-                if (!_this.checkForMatch(item.name)) {
+                if (!_this.checkForCoincidence(item.name)) {
                     _this.emails.push(item);
                 }
             });
@@ -118,10 +122,10 @@ var CreateEmailForm = /** @class */ (function () {
             if (e) {
                 var email_1 = e.target.parentElement.innerHTML.split('<')[0];
                 _this.emails = _this.emails.filter(function (item) { return item.name !== email_1; });
-                _this.updateDom();
+                _this.updateDom(true);
             }
         };
-        this.checkForMatch = function (email) {
+        this.checkForCoincidence = function (email) {
             for (var i = 0; i < _this.emails.length; i++) {
                 if (_this.emails[i].name === email) {
                     return true;
@@ -153,9 +157,9 @@ var CreateEmailForm = /** @class */ (function () {
             divInput.addEventListener('focus', function () { return _this.onFocusInput(); });
             divInput.addEventListener('blur', function (e) { return _this.onBlurInput(e); });
             divInput.addEventListener('keydown', function (e) {
-                if ((e.ctrlKey || e.metaKey) &&
-                    e.key === 'v') {
-                    _this.isPaste = true;
+                if (e.key === 'Enter' ||
+                    ((e.ctrlKey || e.metaKey) && e.key === 'v')) {
+                    _this.isPasteAndEnter = true;
                 }
             });
         }
