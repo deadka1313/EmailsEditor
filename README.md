@@ -1,8 +1,10 @@
 # EmailsEditor
 
-description
+## example code
 
-## INSTALLATION
+https://deadka1313.github.io/EmailsEditor/examples/index.html
+
+## Installation for development
 
 > npm install
 
@@ -17,3 +19,16 @@ Build library
 Build library hotreload
 
 > npm run start
+
+## usages
+
+```javascript
+const emailsEditor = new EmailsEditor(inputContainerNode);
+
+// API
+
+// send line for input
+emailsEditor.setEmail('email@mail.com');
+// get array valid emails
+emailsEditor.getEmail();
+```

@@ -12,10 +12,10 @@ export default class CreateEmailForm implements ICreateEmailForm {
 
     private emails: IEmailsIsValid[] = [];
 
-    private updateDom = (): void => {
+    private updateDom = (isRemove = false): void => {
         const wrapperElement = this.element.querySelector('.email-editor_wrapper-emails');
         if (wrapperElement) {
-            wrapperElement.innerHTML = this.generateEmailsDom();
+            wrapperElement.innerHTML = this.generateEmailsDom(isRemove);
             const emailElements = this.element.querySelectorAll('.emails-editor_closebtn');
             for (let i = 0; i < emailElements.length; i++) {
                 const emailElement = emailElements[i];
@@ -24,7 +24,7 @@ export default class CreateEmailForm implements ICreateEmailForm {
         }
     };
 
-    private generateEmailsDom = (): string => {
+    private generateEmailsDom = (isRemove = false): string => {
         let emailDom = '';
         this.emails.map(item => {
             emailDom +=
@@ -33,9 +33,11 @@ export default class CreateEmailForm implements ICreateEmailForm {
                 '<span class="emails-editor_closebtn">&times;</span>' +
                 '</span>';
         });
-        const divForm = this.element.querySelector('.emails-editor_form');
-        if (divForm) {
-            divForm.scrollTop = divForm.scrollHeight;
+        if (!isRemove) {
+            const divForm = this.element.querySelector('.emails-editor_form');
+            if (divForm) {
+                divForm.scrollTop = divForm.scrollHeight;
+            }
         }
         return emailDom;
     };
@@ -126,7 +128,7 @@ export default class CreateEmailForm implements ICreateEmailForm {
         this.updateDom();
     };
 
-    private checkValid = (email: string) => {
+    private checkValid = (email: string): boolean => {
         const pattern = new RegExp(checkregularEmail);
         return pattern.test(email);
     };
@@ -135,7 +137,7 @@ export default class CreateEmailForm implements ICreateEmailForm {
         if (e) {
             const email = ((e.target as HTMLTextAreaElement).parentElement as HTMLElement).innerHTML.split('<')[0];
             this.emails = this.emails.filter(item => item.name !== email);
-            this.updateDom();
+            this.updateDom(true);
         }
     };
 

@@ -40,7 +40,7 @@
             for(let i = 0; i < lengthEmail; i++){
               email += chars[Math.floor(Math.random() * chars.length)];
             }
-            emailsEditor.setEmail(`${email}@mail.com`);
+            emailsEditor.setEmail(email +'@mail.com');
           }
           function getEmail() {
             const emails =  emailsEditor.getEmail();
