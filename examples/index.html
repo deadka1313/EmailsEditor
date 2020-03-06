@@ -40,7 +40,7 @@
             const emails =  emailsEditor.getEmail();
             let emailsAlertString = emailsEditor.getEmail().length;
             for( let i = 0; i < emails.length; i++) {
-              emailsAlertString += ' ' + emails[i];
+              emailsAlertString += ' ' + emails[i].name;
             }
             alert(emailsAlertString);
           }

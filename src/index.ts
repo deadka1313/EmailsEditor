@@ -1,32 +1,34 @@
 import './index.sass';
 import { ICreateEmailForm } from './ICreateEmailForm';
+import { IEmailsIsValid } from './IEmailsIsValid';
 
 export default class CreateEmailForm implements ICreateEmailForm {
     private element: HTMLElement;
     private placeholderElement: HTMLElement | null = null;
 
-    private validEmails: string[] = ['john@miro.com', 'mike@miro.com', 'alexander@miro.com'];
-    // private invalidEmails: string[] = ['invalid.email'];
+    private emails: IEmailsIsValid[] = [
+        {
+            name: 'john@miro.com',
+            isValid: true,
+        },
+        {
+            name: 'invalid.email',
+            isValid: false,
+        },
+        {
+            name: 'john@miro.com',
+            isValid: true,
+        },
+        {
+            name: 'alexander@miro.com',
+            isValid: true,
+        },
+    ];
 
     private setHtmlForm = (): void => {
         this.element.innerHTML =
             '<div class="emails-editor_form">' +
-            '<span class="emails-editor_email emails-editor_email__valid">' +
-            'john@miro.com' +
-            '<span class="emails-editor_closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>' +
-            '</span>' +
-            '<span class="emails-editor_email emails-editor_email__invalid">' +
-            'invalid.email' +
-            '<span class="emails-editor_closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>' +
-            '</span>' +
-            '<span class="emails-editor_email emails-editor_email__valid">' +
-            'mike@miro.com' +
-            '<span class="emails-editor_closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>' +
-            '</span>' +
-            '<span class="emails-editor_email emails-editor_email__valid">' +
-            'alexander@miro.com' +
-            '<span class="emails-editor_closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>' +
-            '</span>' +
+            this.generateEmailsDom() +
             '<span class="emails-editor_input" contenteditable="true">' +
             '</span>' +
             '<span class="emails-editor_placeholder">add more people…</span>' +
@@ -43,6 +45,18 @@ export default class CreateEmailForm implements ICreateEmailForm {
             divInput.addEventListener('focus', () => this.onFocusInput());
             divInput.addEventListener('blur', e => this.onBlurInput(e));
         }
+    };
+
+    private generateEmailsDom = (): string => {
+        let emailDom = '';
+        this.emails.map(item => {
+            emailDom +=
+                `<span class="emails-editor_email emails-editor_email__${item.isValid ? 'valid' : 'invalid'}">` +
+                item.name +
+                '<span class="emails-editor_closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>' +
+                '</span>';
+        });
+        return emailDom;
     };
 
     private setFocusInput = (e: Event | null): void => {
@@ -95,7 +109,7 @@ export default class CreateEmailForm implements ICreateEmailForm {
         return 'setEmail';
     }
 
-    public getEmail(): string[] {
-        return this.validEmails;
+    public getEmail(): IEmailsIsValid[] {
+        return this.emails.filter(item => item.isValid);
     }
 }
