@@ -7,7 +7,7 @@ export default class CreateEmailForm implements ICreateEmailForm {
     private readonly element: HTMLElement;
     private readonly placeholderElement: HTMLElement | null = null;
 
-    private isPaste = false;
+    private isPasteAndEnter = false;
     private isEdit = false;
 
     private emails: IEmailsIsValid[] = [];
@@ -81,8 +81,8 @@ export default class CreateEmailForm implements ICreateEmailForm {
                     divInput.innerHTML = '';
                 }
             }
-            if ((value && value.length > 1 && this.checkEnterWord(value)) || this.isPaste) {
-                this.isPaste = false;
+            if ((value && value.length > 1 && this.checkEnterWord(value)) || this.isPasteAndEnter) {
+                this.isPasteAndEnter = false;
                 this.addEmail(value);
             }
         }
@@ -180,10 +180,10 @@ export default class CreateEmailForm implements ICreateEmailForm {
             divInput.addEventListener('blur', e => this.onBlurInput(e));
             divInput.addEventListener('keydown', e => {
                 if (
-                    ((e as KeyboardEvent).ctrlKey || (e as KeyboardEvent).metaKey) &&
-                    (e as KeyboardEvent).key === 'v'
+                    (e as KeyboardEvent).key === 'Enter' ||
+                    (((e as KeyboardEvent).ctrlKey || (e as KeyboardEvent).metaKey) && (e as KeyboardEvent).key === 'v')
                 ) {
-                    this.isPaste = true;
+                    this.isPasteAndEnter = true;
                 }
             });
         }
