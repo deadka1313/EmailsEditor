@@ -6,50 +6,17 @@ export default class CreateEmailForm implements ICreateEmailForm {
     private element: HTMLElement;
     private placeholderElement: HTMLElement | null = null;
 
-    private emails: IEmailsIsValid[] = [
-        {
-            name: 'john@miro.com',
-            isValid: true,
-        },
-        {
-            name: 'invalid.email',
-            isValid: false,
-        },
-        {
-            name: 'john@miro.com',
-            isValid: true,
-        },
-        {
-            name: 'alexander@miro.com',
-            isValid: true,
-        },
-    ];
+    private emails: IEmailsIsValid[] = [];
 
     private updateDom = (): void => {
-        this.element.innerHTML =
-            '<div class="emails-editor_form">' +
-            this.generateEmailsDom() +
-            '<span class="emails-editor_input" contenteditable="true">' +
-            '</span>' +
-            '<span class="emails-editor_placeholder">add more people…</span>' +
-            '</div>';
-        const divForm = this.element.querySelector('.emails-editor_form');
-
-        this.placeholderElement = this.element.querySelector('.emails-editor_placeholder');
-        if (divForm) {
-            divForm.addEventListener('click', e => this.setFocusInput(e));
-            divForm.scrollTop = divForm.scrollHeight;
-        }
-        const divInput = this.element.querySelector('.emails-editor_input');
-        if (divInput) {
-            divInput.addEventListener('input', e => this.onChangeInput(e));
-            divInput.addEventListener('focus', () => this.onFocusInput());
-            divInput.addEventListener('blur', e => this.onBlurInput(e));
-        }
-        const emailElements = this.element.querySelectorAll('.emails-editor_closebtn');
-        for (let i = 0; i < emailElements.length; i++) {
-            const emailElement = emailElements[i];
-            emailElement.addEventListener('click', e => this.removeEmail(e));
+        const wrapperElement = this.element.querySelector('.email-editor_wrapper-emails');
+        if (wrapperElement) {
+            wrapperElement.innerHTML = this.generateEmailsDom();
+            const emailElements = this.element.querySelectorAll('.emails-editor_closebtn');
+            for (let i = 0; i < emailElements.length; i++) {
+                const emailElement = emailElements[i];
+                emailElement.addEventListener('click', e => this.removeEmail(e));
+            }
         }
     };
 
@@ -89,8 +56,14 @@ export default class CreateEmailForm implements ICreateEmailForm {
     private onChangeInput = (e: Event | null): void => {
         if (e) {
             const value = (e.target as HTMLTextAreaElement).innerText;
+            if (value.length === 1 && this.checkEnterWord(value)) {
+                const divInput = this.element.querySelector('.emails-editor_input');
+                if (divInput) {
+                    divInput.innerHTML = '';
+                }
+            }
             if (value && value.length > 1 && this.checkEnterWord(value)) {
-                console.log('correct', value);
+                this.addEmail(value);
             }
         }
     };
@@ -118,12 +91,19 @@ export default class CreateEmailForm implements ICreateEmailForm {
     };
 
     private addEmail = (email: string): void => {
+        // const inputEmails = email.replace(/(^\s*)|(\s*)$/g, '');
         const newEmails: IEmailsIsValid[] = [{ name: email, isValid: true }];
         newEmails.map(item => {
             if (!this.checkForMatch(item.name)) {
                 this.emails.push(item);
             }
         });
+
+        const divInput = this.element.querySelector('.emails-editor_input');
+        if (divInput) {
+            divInput.innerHTML = '';
+        }
+
         this.updateDom();
     };
 
@@ -150,7 +130,30 @@ export default class CreateEmailForm implements ICreateEmailForm {
 
     constructor(element: HTMLElement) {
         this.element = element;
-        this.updateDom();
+        this.element.innerHTML =
+            '<div class="emails-editor_form">' +
+            '<span class="email-editor_wrapper-emails">' +
+            this.generateEmailsDom() +
+            '</span>' +
+            '<span class="emails-editor_input" contenteditable="true">' +
+            '</span>' +
+            '<span class="emails-editor_placeholder">add more people…</span>' +
+            '</div>';
+
+        this.placeholderElement = this.element.querySelector('.emails-editor_placeholder');
+
+        const divForm = this.element.querySelector('.emails-editor_form');
+        if (divForm) {
+            divForm.addEventListener('click', e => this.setFocusInput(e));
+            divForm.scrollTop = divForm.scrollHeight;
+        }
+
+        const divInput = this.element.querySelector('.emails-editor_input');
+        if (divInput) {
+            divInput.addEventListener('input', e => this.onChangeInput(e));
+            divInput.addEventListener('focus', () => this.onFocusInput());
+            divInput.addEventListener('blur', e => this.onBlurInput(e));
+        }
     }
 
     public setEmail(email: string): void {
@@ -158,9 +161,8 @@ export default class CreateEmailForm implements ICreateEmailForm {
     }
 
     public getEmail(): string[] {
-        const returnValidEmails: string[] = this.checkValidEmailsStore().map(item => {
+        return this.checkValidEmailsStore().map(item => {
             return item.name;
         });
-        return returnValidEmails;
     }
 }
