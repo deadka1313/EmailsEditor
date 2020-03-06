@@ -35,7 +35,7 @@ export default class CreateEmailForm implements ICreateEmailForm {
 
         this.placeholderElement = this.element.querySelector('.emails-editor_placeholder');
         if (divForm) {
-            divForm.addEventListener('click', this.setFocusInput);
+            divForm.addEventListener('click', e => this.setFocusInput(e));
         }
         const divInput = this.element.querySelector('.emails-editor_input');
         if (divInput) {
@@ -45,29 +45,45 @@ export default class CreateEmailForm implements ICreateEmailForm {
         }
     };
 
-    private setFocusInput = (): void => {
+    private setFocusInput = (e: Event | null): void => {
         const div = this.element.querySelector('span.emails-editor_input');
-        if (div instanceof HTMLElement) {
+        if (e && (e.target as HTMLTextAreaElement).className !== 'emails-editor_input' && div instanceof HTMLElement) {
             div.focus();
+            const range = document.createRange();
+            range.selectNodeContents(div);
+            range.collapse(false);
+            const sel = window.getSelection();
+            if (sel) {
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
         }
     };
 
     private onChangeInput = (e: Event | null): void => {
-        console.log(e && (e.target as HTMLTextAreaElement).innerText);
+        if (e) {
+            const value = (e.target as HTMLTextAreaElement).innerText;
+            if (value && value.length > 1 && this.checkEnterWord(value)) {
+                console.log('correct', value);
+            }
+        }
     };
 
     private onFocusInput = (): void => {
         if (this.placeholderElement) {
             this.placeholderElement.style.display = 'none';
         }
-        console.log('onFocusInput', this.placeholderElement);
     };
 
     private onBlurInput = (e: Event | null): void => {
         if (this.placeholderElement) {
             this.placeholderElement.style.display = 'inline-block';
         }
-        console.log('onBlurInput', e, this.placeholderElement);
+        console.log(e);
+    };
+
+    private checkEnterWord = (value: string) => {
+        return /[\s,]/g.test(value);
     };
 
     constructor(element: HTMLElement) {
