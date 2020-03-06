@@ -5,7 +5,8 @@ export default class CreateEmailForm implements ICreateEmailForm {
     private element: HTMLElement;
     private placeholderElement: HTMLElement | null = null;
 
-    private validEmails: string[] = [];
+    private validEmails: string[] = ['john@miro.com', 'mike@miro.com', 'alexander@miro.com'];
+    // private invalidEmails: string[] = ['invalid.email'];
 
     private setHtmlForm = (): void => {
         this.element.innerHTML =
