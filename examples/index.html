@@ -34,7 +34,13 @@
           const inputContainerNode = document.querySelector('#emails-input');
           const emailsEditor = new EmailsEditor(inputContainerNode);
           function setEmail() {
-            emailsEditor.setEmail('deadka1313@gmail.com');
+            let chars = 'abcdefghijklmnopqrstuvwxyz1234567890';
+            let email = '';
+            const lengthEmail = Math.floor(Math.random() * Math.floor(9) + 5);
+            for(let i = 0; i < lengthEmail; i++){
+              email += chars[Math.floor(Math.random() * chars.length)];
+            }
+            emailsEditor.setEmail(`${email}@mail.com`);
           }
           function getEmail() {
             const emails =  emailsEditor.getEmail();
