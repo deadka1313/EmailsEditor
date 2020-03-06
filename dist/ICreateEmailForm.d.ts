@@ -1,4 +1,4 @@
 export interface ICreateEmailForm {
-    setEmail(): string;
+    setEmail(email: string): void;
     getEmail(): string[];
 }

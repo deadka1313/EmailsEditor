@@ -1,73 +1,172 @@
+var checkregularEmail = /^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i;
+//# sourceMappingURL=constants.js.map
+
 var CreateEmailForm = /** @class */ (function () {
     function CreateEmailForm(element) {
         var _this = this;
         this.placeholderElement = null;
-        this.validEmails = ['john@miro.com', 'mike@miro.com', 'alexander@miro.com'];
-        // private invalidEmails: string[] = ['invalid.email'];
-        this.setHtmlForm = function () {
-            _this.element.innerHTML =
-                '<div class="emails-editor_form">' +
-                    '<span class="emails-editor_email emails-editor_email__valid">' +
-                    'john@miro.com' +
-                    '<span class="emails-editor_closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>' +
-                    '</span>' +
-                    '<span class="emails-editor_email emails-editor_email__invalid">' +
-                    'invalid.email' +
-                    '<span class="emails-editor_closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>' +
-                    '</span>' +
-                    '<span class="emails-editor_email emails-editor_email__valid">' +
-                    'mike@miro.com' +
-                    '<span class="emails-editor_closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>' +
-                    '</span>' +
-                    '<span class="emails-editor_email emails-editor_email__valid">' +
-                    'alexander@miro.com' +
-                    '<span class="emails-editor_closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>' +
-                    '</span>' +
-                    '<span class="emails-editor_input" contenteditable="true">' +
-                    '</span>' +
-                    '<span class="emails-editor_placeholder">add more people…</span>' +
-                    '</div>';
+        this.isPaste = false;
+        this.isEdit = false;
+        this.emails = [];
+        this.updateDom = function () {
+            var wrapperElement = _this.element.querySelector('.email-editor_wrapper-emails');
+            if (wrapperElement) {
+                wrapperElement.innerHTML = _this.generateEmailsDom();
+                var emailElements = _this.element.querySelectorAll('.emails-editor_closebtn');
+                for (var i = 0; i < emailElements.length; i++) {
+                    var emailElement = emailElements[i];
+                    emailElement.addEventListener('click', function (e) { return _this.removeEmail(e); });
+                }
+            }
+        };
+        this.generateEmailsDom = function () {
+            var emailDom = '';
+            _this.emails.map(function (item) {
+                emailDom +=
+                    "<span class=\"emails-editor_email emails-editor_email__" + (item.isValid ? 'valid' : 'invalid') + "\">" +
+                        item.name +
+                        '<span class="emails-editor_closebtn">&times;</span>' +
+                        '</span>';
+            });
             var divForm = _this.element.querySelector('.emails-editor_form');
-            _this.placeholderElement = _this.element.querySelector('.emails-editor_placeholder');
             if (divForm) {
-                divForm.addEventListener('click', _this.setFocusInput);
+                divForm.scrollTop = divForm.scrollHeight;
             }
-            var divInput = _this.element.querySelector('.emails-editor_input');
-            if (divInput) {
-                divInput.addEventListener('input', function (e) { return _this.onChangeInput(e); });
-                divInput.addEventListener('focus', function () { return _this.onFocusInput(); });
-                divInput.addEventListener('blur', function (e) { return _this.onBlurInput(e); });
-            }
+            return emailDom;
         };
-        this.setFocusInput = function () {
+        this.setFocusInput = function (e) {
             var div = _this.element.querySelector('span.emails-editor_input');
-            if (div instanceof HTMLElement) {
+            if (e &&
+                e.target.className.indexOf('emails-editor_input') === -1 &&
+                e.target.className.indexOf('emails-editor_closebtn') === -1 &&
+                e.target.className.indexOf('emails-editor_email') === -1 &&
+                !_this.isEdit &&
+                div instanceof HTMLElement) {
+                _this.isEdit = true;
                 div.focus();
+                var range = document.createRange();
+                range.selectNodeContents(div);
+                range.collapse(false);
+                var sel = window.getSelection();
+                if (sel) {
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+                }
             }
-        };
-        this.onChangeInput = function (e) {
-            console.log(e && e.target.innerText);
         };
         this.onFocusInput = function () {
             if (_this.placeholderElement) {
                 _this.placeholderElement.style.display = 'none';
+                _this.isEdit = false;
             }
-            console.log('onFocusInput', _this.placeholderElement);
+        };
+        this.onChangeInput = function (e) {
+            if (e) {
+                var value = e.target.innerText;
+                if (value.length === 1 && _this.checkEnterWord(value)) {
+                    var divInput = _this.element.querySelector('.emails-editor_input');
+                    if (divInput) {
+                        divInput.innerHTML = '';
+                    }
+                }
+                if ((value && value.length > 1 && _this.checkEnterWord(value)) || _this.isPaste) {
+                    _this.isPaste = false;
+                    _this.addEmail(value);
+                }
+            }
         };
         this.onBlurInput = function (e) {
             if (_this.placeholderElement) {
                 _this.placeholderElement.style.display = 'inline-block';
             }
-            console.log('onBlurInput', e, _this.placeholderElement);
+            if (e) {
+                var email = e.target.innerText.replace(/(^\s*)|(\s*)$/g, '');
+                if (email) {
+                    _this.addEmail(email);
+                }
+            }
+        };
+        this.checkEnterWord = function (value) {
+            return /[\s,]/g.test(value);
+        };
+        this.addEmail = function (email) {
+            var inputEmails = email.replace(/(^\s*)|(\s*)$/g, '');
+            inputEmails = inputEmails.replace(/(,\s*)$/g, ',');
+            var inputEmailsSplit = inputEmails.split(/\s|,/).filter(function (item) { return item; });
+            var newEmails = inputEmailsSplit.map(function (item) {
+                return {
+                    name: item,
+                    isValid: _this.checkValid(item),
+                };
+            });
+            newEmails.map(function (item) {
+                if (!_this.checkForMatch(item.name)) {
+                    _this.emails.push(item);
+                }
+            });
+            var divInput = _this.element.querySelector('.emails-editor_input');
+            if (divInput) {
+                divInput.innerHTML = '';
+            }
+            _this.updateDom();
+        };
+        this.checkValid = function (email) {
+            var pattern = new RegExp(checkregularEmail);
+            return pattern.test(email);
+        };
+        this.removeEmail = function (e) {
+            if (e) {
+                var email_1 = e.target.parentElement.innerHTML.split('<')[0];
+                _this.emails = _this.emails.filter(function (item) { return item.name !== email_1; });
+                _this.updateDom();
+            }
+        };
+        this.checkForMatch = function (email) {
+            for (var i = 0; i < _this.emails.length; i++) {
+                if (_this.emails[i].name === email) {
+                    return true;
+                }
+            }
+            return false;
+        };
+        this.checkValidEmailsStore = function () {
+            return _this.emails.filter(function (item) { return item.isValid; });
         };
         this.element = element;
-        this.setHtmlForm();
+        this.element.innerHTML =
+            '<div class="emails-editor_form">' +
+                '<span class="email-editor_wrapper-emails">' +
+                this.generateEmailsDom() +
+                '</span>' +
+                '<span class="emails-editor_input" contenteditable="true">' +
+                '</span>' +
+                '<span class="emails-editor_placeholder">add more people…</span>' +
+                '</div>';
+        this.placeholderElement = this.element.querySelector('.emails-editor_placeholder');
+        var divForm = this.element.querySelector('.emails-editor_form');
+        if (divForm) {
+            divForm.addEventListener('click', function (e) { return _this.setFocusInput(e); });
+        }
+        var divInput = this.element.querySelector('.emails-editor_input');
+        if (divInput) {
+            divInput.addEventListener('input', function (e) { return _this.onChangeInput(e); });
+            divInput.addEventListener('focus', function () { return _this.onFocusInput(); });
+            divInput.addEventListener('blur', function (e) { return _this.onBlurInput(e); });
+            divInput.addEventListener('keydown', function (e) {
+                if ((e.ctrlKey || e.metaKey) &&
+                    e.key === 'v') {
+                    _this.isPaste = true;
+                }
+            });
+        }
     }
-    CreateEmailForm.prototype.setEmail = function () {
-        return 'setEmail';
+    CreateEmailForm.prototype.setEmail = function (email) {
+        this.addEmail(email);
     };
     CreateEmailForm.prototype.getEmail = function () {
-        return this.validEmails;
+        return this.checkValidEmailsStore().map(function (item) {
+            return item.name;
+        });
     };
     return CreateEmailForm;
 }());

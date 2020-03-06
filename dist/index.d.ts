@@ -1,15 +1,24 @@
 import './index.sass';
 import { ICreateEmailForm } from './ICreateEmailForm';
 export default class CreateEmailForm implements ICreateEmailForm {
-    private element;
-    private placeholderElement;
-    private validEmails;
-    private setHtmlForm;
+    private readonly element;
+    private readonly placeholderElement;
+    private isPaste;
+    private isEdit;
+    private emails;
+    private updateDom;
+    private generateEmailsDom;
     private setFocusInput;
-    private onChangeInput;
     private onFocusInput;
+    private onChangeInput;
     private onBlurInput;
+    private checkEnterWord;
+    private addEmail;
+    private checkValid;
+    private removeEmail;
+    private checkForMatch;
+    private checkValidEmailsStore;
     constructor(element: HTMLElement);
-    setEmail(): string;
+    setEmail(email: string): void;
     getEmail(): string[];
 }
