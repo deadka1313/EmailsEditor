@@ -2,94 +2,18 @@ import './index.sass';
 import { ICreateEmailForm } from './ICreateEmailForm';
 import { IEmailIsValid } from './IEmailIsValid';
 import { checkEnterLetter, checkForRepeatedEmails, checkValidationEmails, checkValidEmail } from './helpers';
+import FormDom from './FormDom';
 
 export default class CreateEmailForm implements ICreateEmailForm {
-    private readonly element: HTMLElement;
-    private readonly placeholderElement: HTMLElement | null = null;
-    private readonly wrapperForm: HTMLElement | null = null;
-    private readonly wrapperEmails: HTMLElement | null = null;
-    private readonly inputElement: HTMLElement | null = null;
-
-    private isEdit = false;
+    private formDom: FormDom;
 
     private emails: IEmailIsValid[] = [];
-
-    private initialDOM = (): void => {
-        this.element.innerHTML =
-            '<div class="emails-editor_form">' +
-            '<span class="email-editor_wrapper-emails">' +
-            this.generateEmailsDom() +
-            '</span>' +
-            '<span class="emails-editor_input" contenteditable="true">' +
-            '</span>' +
-            '<span class="emails-editor_placeholder">add more people…</span>' +
-            '</div>';
-    };
-
-    private updateDom = (isRemove = false): void => {
-        if (this.wrapperEmails) {
-            this.wrapperEmails.innerHTML = this.generateEmailsDom(isRemove);
-            const emailElements = this.element.querySelectorAll('.emails-editor_closebtn');
-            for (let i = 0; i < emailElements.length; i++) {
-                const emailElement = emailElements[i];
-                emailElement.addEventListener('click', e => this.removeEmail(e));
-            }
-        }
-    };
-
-    private generateEmailsDom = (isRemove = false): string => {
-        let emailDom = '';
-        this.emails.map(item => {
-            emailDom +=
-                `<span class="emails-editor_email emails-editor_email__${item.isValid ? 'valid' : 'invalid'}">` +
-                item.name +
-                '<span class="emails-editor_closebtn">&times;</span>' +
-                '</span>';
-        });
-        if (!isRemove) {
-            if (this.wrapperForm) {
-                this.wrapperForm.scrollTop = this.wrapperForm.scrollHeight;
-            }
-        }
-        return emailDom;
-    };
-
-    private setFocusInput = (e: Event | null): void => {
-        if (
-            e &&
-            this.inputElement &&
-            (e.target as HTMLTextAreaElement).className.indexOf('emails-editor_input') === -1 &&
-            (e.target as HTMLTextAreaElement).className.indexOf('emails-editor_closebtn') === -1 &&
-            (e.target as HTMLTextAreaElement).className.indexOf('emails-editor_email') === -1 &&
-            !this.isEdit
-        ) {
-            this.isEdit = true;
-            this.inputElement.focus();
-            const range = document.createRange();
-            range.selectNodeContents(this.inputElement);
-            range.collapse(false);
-            const sel = window.getSelection();
-            if (sel) {
-                sel.removeAllRanges();
-                sel.addRange(range);
-            }
-        }
-    };
-
-    private onFocus = (): void => {
-        if (this.placeholderElement) {
-            this.placeholderElement.style.display = 'none';
-            this.isEdit = false;
-        }
-    };
 
     private onChange = (e: Event | null): void => {
         if (e) {
             const value = (e.target as HTMLTextAreaElement).innerText;
             if (value.length === 1 && checkEnterLetter(value)) {
-                if (this.inputElement) {
-                    this.inputElement.innerHTML = '';
-                }
+                this.formDom.resetInput();
             }
             if (value && value.length > 1 && checkEnterLetter(value)) {
                 this.addEmail(value);
@@ -98,9 +22,6 @@ export default class CreateEmailForm implements ICreateEmailForm {
     };
 
     private onBlur = (e: Event | null): void => {
-        if (this.placeholderElement) {
-            this.placeholderElement.style.display = 'inline-block';
-        }
         if (e) {
             const email = (e.target as HTMLTextAreaElement).innerText.replace(/(^\s*)|(\s*)$/g, '');
             if (email) {
@@ -110,10 +31,10 @@ export default class CreateEmailForm implements ICreateEmailForm {
     };
 
     private enterValuesToStore = (): void => {
-        if (this.inputElement) {
-            const inputText = this.inputElement.innerHTML;
-            inputText && this.addEmail(inputText);
-            this.inputElement.innerHTML = '';
+        if (this.formDom.inputElement) {
+            const inputText = this.formDom.inputElement.innerHTML;
+            this.addEmail(inputText);
+            this.formDom.resetInput();
         }
     };
 
@@ -130,49 +51,36 @@ export default class CreateEmailForm implements ICreateEmailForm {
         newEmails.map(item => {
             if (!checkForRepeatedEmails(item.name, this.emails)) {
                 this.emails.push(item);
+                this.formDom.addEmailDOM(item);
+                const itemDOM = this.formDom.wrapperEmails.querySelector(`[data-email-name="${item.name}"]`);
+                itemDOM?.addEventListener('click', e => this.removeEmail(e));
             }
         });
 
-        if (this.inputElement) {
-            this.inputElement.innerHTML = '';
-        }
-
-        this.updateDom();
+        this.formDom.resetInput();
     };
 
     private removeEmail = (e: Event | null): void => {
         if (e) {
-            const email = ((e.target as HTMLTextAreaElement).parentElement as HTMLElement).innerHTML.split('<')[0];
+            const email = ((e.target as HTMLTextAreaElement).parentElement as HTMLElement).dataset.emailName as string;
             this.emails = this.emails.filter(item => item.name !== email);
-            this.updateDom(true);
+            this.formDom.removeEmailDOM(email);
         }
     };
 
     constructor(element: HTMLElement) {
-        this.element = element;
+        this.formDom = new FormDom(element);
 
-        this.initialDOM();
-
-        this.placeholderElement = this.element.querySelector('.emails-editor_placeholder');
-        this.wrapperForm = this.element.querySelector('.emails-editor_form');
-        this.inputElement = this.element.querySelector('.emails-editor_input');
-        this.wrapperEmails = this.element.querySelector('.email-editor_wrapper-emails');
-
-        if (this.wrapperForm) {
-            this.wrapperForm.addEventListener('click', e => this.setFocusInput(e));
-        }
-
-        if (this.inputElement) {
+        if (this.formDom.inputElement) {
             // fix IE 11
             const inputEventType = /Trident/.test(navigator.userAgent) ? 'textinput' : 'input';
 
-            this.inputElement.addEventListener(inputEventType, e => this.onChange(e));
-            this.inputElement.addEventListener('focus', () => this.onFocus());
-            this.inputElement.addEventListener('blur', e => this.onBlur(e));
-            this.inputElement.addEventListener('paste', () => {
+            this.formDom.inputElement.addEventListener(inputEventType, e => this.onChange(e));
+            this.formDom.inputElement.addEventListener('blur', e => this.onBlur(e));
+            this.formDom.inputElement.addEventListener('paste', () => {
                 this.enterValuesToStore();
             });
-            this.inputElement.addEventListener('keydown', e => {
+            this.formDom.inputElement.addEventListener('keydown', e => {
                 if ((e as KeyboardEvent).key === 'Enter') {
                     this.enterValuesToStore();
                 }

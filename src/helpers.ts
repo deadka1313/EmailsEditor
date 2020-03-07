@@ -22,3 +22,11 @@ export const checkForRepeatedEmails = (email: string, emails: IEmailIsValid[]): 
     }
     return false;
 };
+
+export const notEmpty = <T>(item: T): T => {
+    if (item) {
+        return item;
+    } else {
+        throw new Error(`Empty property ${item}`);
+    }
+};
