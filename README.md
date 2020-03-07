@@ -30,7 +30,7 @@ const emailsEditor = new EmailsEditor(inputContainerNode);
 // send line for input
 emailsEditor.setEmail('email@mail.com');
 // get array valid emails
-emailsEditor.getEmail();
+emailsEditor.getEmails();
 ```
 
 ## BAGS

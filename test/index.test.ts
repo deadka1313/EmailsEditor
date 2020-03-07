@@ -5,7 +5,7 @@ describe('Test CreateEmailForm', () => {
     const createEmailForm = new CreateEmailForm(div);
 
     test('test getEmail before work', () => {
-        expect(createEmailForm.getEmail().length).toBe(0);
+        expect(createEmailForm.getEmails().length).toBe(0);
     });
 
     test('test setEmail', () => {
@@ -13,11 +13,11 @@ describe('Test CreateEmailForm', () => {
         const invalidEmail = 'asdsadsad';
 
         createEmailForm.setEmail(validEmail);
-        const emails = createEmailForm.getEmail();
+        const emails = createEmailForm.getEmails();
         expect(emails.find(item => item === validEmail)).toBe(validEmail);
-        expect(createEmailForm.getEmail().length).toBe(1);
+        expect(createEmailForm.getEmails().length).toBe(1);
 
         createEmailForm.setEmail(invalidEmail);
-        expect(createEmailForm.getEmail().length).toBe(1);
+        expect(createEmailForm.getEmails().length).toBe(1);
     });
 });

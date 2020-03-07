@@ -1,7 +1,7 @@
 import './index.sass';
 import { ICreateEmailForm } from './ICreateEmailForm';
-import { IEmailsIsValid } from './IEmailsIsValid';
-import { checkregularEmail } from './constants';
+import { IEmailIsValid } from './IEmailIsValid';
+import { checkEnterLetter, checkForRepeatedEmails, checkValidationEmails, checkValidEmail } from './helpers';
 
 export default class CreateEmailForm implements ICreateEmailForm {
     private readonly element: HTMLElement;
@@ -9,7 +9,7 @@ export default class CreateEmailForm implements ICreateEmailForm {
 
     private isEdit = false;
 
-    private emails: IEmailsIsValid[] = [];
+    private emails: IEmailIsValid[] = [];
 
     private updateDom = (isRemove = false): void => {
         const wrapperElement = this.element.querySelector('.email-editor_wrapper-emails');
@@ -64,29 +64,29 @@ export default class CreateEmailForm implements ICreateEmailForm {
         }
     };
 
-    private onFocusInput = (): void => {
+    private onFocus = (): void => {
         if (this.placeholderElement) {
             this.placeholderElement.style.display = 'none';
             this.isEdit = false;
         }
     };
 
-    private onChangeInput = (e: Event | null): void => {
+    private onChange = (e: Event | null): void => {
         if (e) {
             const value = (e.target as HTMLTextAreaElement).innerText;
-            if (value.length === 1 && this.checkEnterWord(value)) {
+            if (value.length === 1 && checkEnterLetter(value)) {
                 const divInput = this.element.querySelector('.emails-editor_input');
                 if (divInput) {
                     divInput.innerHTML = '';
                 }
             }
-            if (value && value.length > 1 && this.checkEnterWord(value)) {
+            if (value && value.length > 1 && checkEnterLetter(value)) {
                 this.addEmail(value);
             }
         }
     };
 
-    private onBlurInput = (e: Event | null): void => {
+    private onBlur = (e: Event | null): void => {
         if (this.placeholderElement) {
             this.placeholderElement.style.display = 'inline-block';
         }
@@ -98,22 +98,18 @@ export default class CreateEmailForm implements ICreateEmailForm {
         }
     };
 
-    private checkEnterWord = (value: string): boolean => {
-        return /[\s,]/g.test(value);
-    };
-
     private addEmail = (email: string): void => {
         let inputEmails: string = email.replace(/(^\s*)|(\s*)$/g, '');
         inputEmails = inputEmails.replace(/(,\s*)$/g, ',');
         const inputEmailsSplit: string[] = inputEmails.split(/\s|,/).filter(item => item);
-        const newEmails: IEmailsIsValid[] = inputEmailsSplit.map(item => {
+        const newEmails: IEmailIsValid[] = inputEmailsSplit.map(item => {
             return {
                 name: item,
-                isValid: this.checkValid(item),
+                isValid: checkValidEmail(item),
             };
         });
         newEmails.map(item => {
-            if (!this.checkForCoincidence(item.name)) {
+            if (!checkForRepeatedEmails(item.name, this.emails)) {
                 this.emails.push(item);
             }
         });
@@ -126,30 +122,12 @@ export default class CreateEmailForm implements ICreateEmailForm {
         this.updateDom();
     };
 
-    private checkValid = (email: string): boolean => {
-        const pattern = new RegExp(checkregularEmail);
-        return pattern.test(email);
-    };
-
     private removeEmail = (e: Event | null): void => {
         if (e) {
             const email = ((e.target as HTMLTextAreaElement).parentElement as HTMLElement).innerHTML.split('<')[0];
             this.emails = this.emails.filter(item => item.name !== email);
             this.updateDom(true);
         }
-    };
-
-    private checkForCoincidence = (email: string): boolean => {
-        for (let i = 0; i < this.emails.length; i++) {
-            if (this.emails[i].name === email) {
-                return true;
-            }
-        }
-        return false;
-    };
-
-    private checkValidEmailsStore = (): IEmailsIsValid[] => {
-        return this.emails.filter(item => item.isValid);
     };
 
     constructor(element: HTMLElement) {
@@ -176,9 +154,9 @@ export default class CreateEmailForm implements ICreateEmailForm {
             // fix IE 11
             const inputEventType = /Trident/.test(navigator.userAgent) ? 'textinput' : 'input';
 
-            divInput.addEventListener(inputEventType, e => this.onChangeInput(e));
-            divInput.addEventListener('focus', () => this.onFocusInput());
-            divInput.addEventListener('blur', e => this.onBlurInput(e));
+            divInput.addEventListener(inputEventType, e => this.onChange(e));
+            divInput.addEventListener('focus', () => this.onFocus());
+            divInput.addEventListener('blur', e => this.onBlur(e));
             divInput.addEventListener('keydown', e => {
                 if (
                     (e as KeyboardEvent).key === 'Enter' ||
@@ -200,8 +178,8 @@ export default class CreateEmailForm implements ICreateEmailForm {
         this.addEmail(email);
     }
 
-    public getEmail(): string[] {
-        return this.checkValidEmailsStore().map(item => {
+    public getEmails(): string[] {
+        return checkValidationEmails(this.emails).map(item => {
             return item.name;
         });
     }
