@@ -72,14 +72,14 @@ export default class FormDom {
         const newDeleteItemElement = document.createElement('span');
         newDeleteItemElement.innerHTML = '&times;';
         newDeleteItemElement.className = 'emails-editor_closebtn';
-        newElement.append(newDeleteItemElement);
+        newElement.appendChild(newDeleteItemElement);
 
-        this.wrapperEmails.append(newElement);
+        this.wrapperEmails.appendChild(newElement);
     };
 
     removeEmailDOM = (name: string): void => {
         const item = this.wrapperEmails.querySelector(`[data-email-name="${name}"]`);
-        item?.remove();
+        item?.parentNode?.removeChild(item);
     };
 
     resetInput = (): void => {
