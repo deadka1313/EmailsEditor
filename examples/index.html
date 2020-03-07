@@ -19,7 +19,7 @@
             <div class="example-form">
                 <div class="example-form_main-block">
                     <div class="example-form_header">Share <span class="example-form_header__bold">Board name</span> with others</div>
-                    <div id="emails-input"></div>
+                    <div id="emails-input"></div><div id="emails-input1"></div>
                 </div>
                 <div class="example-form_footer">
                     <button class="example-button" onclick="setEmail()">Add email</button>
@@ -31,25 +31,25 @@
 
         <script type="text/javascript" src="../dist/index.min.js"></script>
         <script>
-          const inputContainerNode = document.querySelector('#emails-input');
-          const emailsEditor = new EmailsEditor(inputContainerNode);
-          function setEmail() {
-            let chars = 'abcdefghijklmnopqrstuvwxyz1234567890';
-            let email = '';
-            const lengthEmail = Math.floor(Math.random() * Math.floor(9) + 5);
-            for(let i = 0; i < lengthEmail; i++){
-              email += chars[Math.floor(Math.random() * chars.length)];
+            const inputContainerNode = document.querySelector('#emails-input');
+            const emailsEditor = new EmailsEditor(inputContainerNode);
+            function setEmail() {
+                let chars = 'abcdefghijklmnopqrstuvwxyz1234567890';
+                let email = '';
+                const lengthEmail = Math.floor(Math.random() * Math.floor(9) + 5);
+                for(let i = 0; i < lengthEmail; i++){
+                  email += chars[Math.floor(Math.random() * chars.length)];
+                }
+                emailsEditor.setEmail(email +'@mail.com');
             }
-            emailsEditor.setEmail(email +'@mail.com');
-          }
-          function getEmails() {
-            const emails =  emailsEditor.getEmails();
-            let emailsAlertString = emailsEditor.getEmails().length + ' valid emails \n';
-            for( let i = 0; i < emails.length; i++) {
-              emailsAlertString += ' ' + emails[i];
+            function getEmails() {
+                const emails =  emailsEditor.getEmails();
+                let emailsAlertString = emailsEditor.getEmails().length + ' valid emails \n';
+                for( let i = 0; i < emails.length; i++) {
+                    emailsAlertString += ' ' + emails[i];
+                }
+                alert(emailsAlertString);
             }
-            alert(emailsAlertString);
-          }
         </script>
 
     </body>

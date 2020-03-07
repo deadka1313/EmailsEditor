@@ -38,3 +38,4 @@ emailsEditor.getEmails();
 Elimination of a bug in the subject during the decision process
 
 1. if press enter in ie
+2. FUTURE: contenteditable -> input
