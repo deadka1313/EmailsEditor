@@ -1,6 +1,6 @@
 import CreateEmailForm from '../src';
 
-describe('Test CreateEmailForm', () => {
+describe('Test CreateEmailForm API', () => {
     const div = document.createElement('div');
     const createEmailForm = new CreateEmailForm(div);
 
@@ -19,5 +19,12 @@ describe('Test CreateEmailForm', () => {
 
         createEmailForm.setEmail(invalidEmail);
         expect(createEmailForm.getEmails().length).toBe(1);
+    });
+});
+
+describe('Test DOM', () => {
+    test('test snapshot', () => {
+        const tree = document.createElement('div');
+        expect(tree).toMatchSnapshot();
     });
 });
