@@ -80,7 +80,7 @@ var FormDom = /** @class */ (function () {
         };
         this.resetInput = function () {
             _this.inputElement.value = '';
-            _this.inputElement.style.width = _this.getTextWidth() + 'px';
+            _this.inputElement.style.width = 2 + _this.getTextWidth() + 'px';
             _this.placeholderElement.style.display = 'inline-block';
         };
         this.element = elem;
