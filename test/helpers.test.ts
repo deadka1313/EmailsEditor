@@ -1,5 +1,5 @@
 import { checkValidEmail, checkEnterLetter, checkValidationEmails, checkForRepeatedEmails } from '../src/helpers';
-import { IEmailIsValid } from '../src/IEmailIsValid';
+import { IEmailIsValid } from '../src/core/IEmailIsValid';
 
 const emails: IEmailIsValid[] = [
     {

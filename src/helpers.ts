@@ -1,5 +1,5 @@
 import { checkregularEmail } from './constants';
-import { IEmailIsValid } from './IEmailIsValid';
+import { IEmailIsValid } from './core/IEmailIsValid';
 
 export const checkValidEmail = (email: string): boolean => {
     const pattern = new RegExp(checkregularEmail);

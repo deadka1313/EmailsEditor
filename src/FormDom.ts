@@ -1,7 +1,13 @@
 import { notEmpty } from './helpers';
-import { IEmailIsValid } from './IEmailIsValid';
+import { IEmailIsValid } from './core/IEmailIsValid';
 
 export default class FormDom {
+    private readonly element: HTMLElement;
+    private readonly placeholderElement: HTMLElement;
+    private readonly wrapperForm: HTMLElement;
+
+    private readonly hideElementWidthForInput: HTMLElement;
+
     private setFocusInput = (e: Event | null): void => {
         if (
             e &&
@@ -11,25 +17,22 @@ export default class FormDom {
             (e.target as HTMLTextAreaElement).className.indexOf('emails-editor_email') === -1
         ) {
             this.inputElement.focus();
-            const range = document.createRange();
-            range.selectNodeContents(this.inputElement);
-            range.collapse(false);
-            const sel = window.getSelection();
-            sel?.removeAllRanges();
-            sel?.addRange(range);
         }
     };
 
-    private onFocus = (): void => {
-        if (this.placeholderElement) {
+    private onInput = (e: Event): void => {
+        const value = (e.target as HTMLTextAreaElement)?.value;
+        this.inputElement.style.width = 2 + this.getTextWidth(value) + 'px';
+        if (value) {
             this.placeholderElement.style.display = 'none';
-        }
-    };
-
-    private onBlur = (): void => {
-        if (this.placeholderElement) {
+        } else if (this.placeholderElement.style.display === 'none') {
             this.placeholderElement.style.display = 'inline-block';
         }
+    };
+
+    private getTextWidth = (value = ''): number => {
+        this.hideElementWidthForInput.innerHTML = value;
+        return this.hideElementWidthForInput.offsetWidth;
     };
 
     constructor(elem: HTMLElement) {
@@ -39,25 +42,23 @@ export default class FormDom {
             '<div class="emails-editor_form">' +
             '<span class="email-editor_wrapper-emails">' +
             '</span>' +
-            '<span class="emails-editor_input" contenteditable="true">' +
+            '<input class="emails-editor_input" />' +
+            '<span class="emails-editor_fake-span">' +
             '</span>' +
             '<span class="emails-editor_placeholder">add more people…</span>' +
             '</div>';
 
         this.placeholderElement = notEmpty(this.element.querySelector('.emails-editor_placeholder') as HTMLElement);
         this.wrapperForm = notEmpty(this.element.querySelector('.emails-editor_form') as HTMLElement);
-        this.inputElement = notEmpty(this.element.querySelector('.emails-editor_input') as HTMLElement);
+        this.inputElement = notEmpty(this.element.querySelector('.emails-editor_input') as HTMLTextAreaElement);
         this.wrapperEmails = notEmpty(this.element.querySelector('.email-editor_wrapper-emails') as HTMLElement);
+        this.hideElementWidthForInput = notEmpty(this.element.querySelector('.emails-editor_fake-span') as HTMLElement);
 
         this.wrapperForm.addEventListener('click', e => this.setFocusInput(e));
-        this.inputElement.addEventListener('focus', () => this.onFocus());
-        this.inputElement.addEventListener('blur', () => this.onBlur());
+        this.inputElement.addEventListener('input', e => this.onInput(e));
     }
 
-    readonly element: HTMLElement;
-    readonly placeholderElement: HTMLElement;
-    readonly wrapperForm: HTMLElement;
-    readonly inputElement: HTMLElement;
+    readonly inputElement: HTMLTextAreaElement;
     readonly wrapperEmails: HTMLElement;
 
     addEmailDOM = (email: IEmailIsValid): void => {
@@ -83,6 +84,8 @@ export default class FormDom {
     };
 
     resetInput = (): void => {
-        this.inputElement.innerHTML = '';
+        this.inputElement.value = '';
+        this.inputElement.style.width = this.getTextWidth() + 'px';
+        this.placeholderElement.style.display = 'inline-block';
     };
 }

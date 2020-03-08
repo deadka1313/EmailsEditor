@@ -1,6 +1,6 @@
 import './index.sass';
-import { ICreateEmailForm } from './ICreateEmailForm';
-import { IEmailIsValid } from './IEmailIsValid';
+import { ICreateEmailForm } from './core/ICreateEmailForm';
+import { IEmailIsValid } from './core/IEmailIsValid';
 import { checkEnterLetter, checkForRepeatedEmails, checkValidationEmails, checkValidEmail } from './helpers';
 import FormDom from './FormDom';
 
@@ -11,7 +11,7 @@ export default class CreateEmailForm implements ICreateEmailForm {
 
     private onChange = (e: Event | null): void => {
         if (e) {
-            const value = (e.target as HTMLTextAreaElement).innerText;
+            const value = (e.target as HTMLTextAreaElement).value;
             if (value.length === 1 && checkEnterLetter(value)) {
                 this.formDom.resetInput();
             }
@@ -23,7 +23,7 @@ export default class CreateEmailForm implements ICreateEmailForm {
 
     private onBlur = (e: Event | null): void => {
         if (e) {
-            const email = (e.target as HTMLTextAreaElement).innerText.replace(/(^\s*)|(\s*)$/g, '');
+            const email = (e.target as HTMLTextAreaElement).value.replace(/(^\s*)|(\s*)$/g, '');
             if (email) {
                 this.addEmail(email);
             }
@@ -32,8 +32,9 @@ export default class CreateEmailForm implements ICreateEmailForm {
 
     private enterValuesToStore = (): void => {
         if (this.formDom.inputElement) {
-            const inputText = this.formDom.inputElement.innerHTML;
-            this.addEmail(inputText);
+            const value = this.formDom.inputElement.value;
+            console.log(value);
+            this.addEmail(value);
             this.formDom.resetInput();
         }
     };

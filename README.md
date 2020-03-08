@@ -1,4 +1,6 @@
-# EmailsEditor v0.1.1
+# EmailsEditor v0.2.0
+
+![example](./readmiImg/example.png)
 
 ## example code
 
@@ -32,14 +34,3 @@ emailsEditor.setEmail('email@mail.com');
 // get array valid emails
 emailsEditor.getEmails();
 ```
-
-## BAGS
-
-Elimination of a bug in the subject during the decision process
-
-1. if press enter in ie
-2. FUTURE: contenteditable -> input
-
-## UPDATE
-
--   optimisation remove and add emails DOM

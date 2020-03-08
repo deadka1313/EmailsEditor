@@ -12,16 +12,18 @@ $colorGrey: #C3C2CF
     cursor: text
     overflow-wrap: break-word
   &_input
-    min-width: 2px
+    width: 2px
     border: none
-    margin-right: 8px
+    font-size: 14px
+    margin-right: 0
     &:focus
       outline: none!important
+    &::-ms-clear
+      display: none
   &_placeholder
     color: $colorGrey
     font-size: 14px
     line-height: 24px
-    margin-left: 0
     display: inline-block
   &_closebtn
     margin-left: 7px
@@ -47,3 +49,8 @@ $colorGrey: #C3C2CF
     &__invalid
       border-bottom: 1px dashed #D92929
       padding: 1px 0
+  &_fake-span
+    opacity: 0
+    font-size: 14px
+    position: absolute
+    border: red
