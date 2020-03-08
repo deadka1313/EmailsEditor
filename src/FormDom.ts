@@ -85,7 +85,7 @@ export default class FormDom {
 
     resetInput = (): void => {
         this.inputElement.value = '';
-        this.inputElement.style.width = this.getTextWidth() + 'px';
+        this.inputElement.style.width = 2 + this.getTextWidth() + 'px';
         this.placeholderElement.style.display = 'inline-block';
     };
 }
