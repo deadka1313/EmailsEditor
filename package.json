@@ -1,6 +1,6 @@
 {
     "name": "emailseditor",
-    "version": "0.1.1",
+    "version": "0.2.0",
     "description": "Emails editor",
     "main": "dist/index.js",
     "module": "dist/index.es.js",
@@ -16,7 +16,12 @@
         "prettier": "prettier --write src/* test/*",
         "prettier-watch": "onchange 'src/**/*' -- prettier --write {{changed}}",
         "lint": "eslint src/**/*{ts,tsx} --ext .ts,.tsx --fix",
-        "test": "npm run lint && jest"
+        "test": "npm run lint && jest --verbose",
+        "test:update": "jest --u",
+        "test:watch": "jest --watch",
+        "test:coverage": "jest --coverage",
+        "test:debug": "jest --runInBand --detectOpenHandles",
+        "test:clear": "jest --clearCache"
     },
     "repository": {
         "type": "git",

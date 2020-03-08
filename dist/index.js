@@ -3,97 +3,137 @@
 Object.defineProperty(exports, '__esModule', { value: true });
 
 var checkregularEmail = /^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i;
-//# sourceMappingURL=constants.js.map
+
+var checkValidEmail = function (email) {
+    var pattern = new RegExp(checkregularEmail);
+    return pattern.test(email);
+};
+var checkEnterLetter = function (word) {
+    return /[\s,]/g.test(word);
+};
+var checkValidationEmails = function (emails) {
+    return emails.filter(function (item) { return item.isValid; });
+};
+var checkForRepeatedEmails = function (email, emails) {
+    for (var i = 0; i < emails.length; i++) {
+        if (emails[i].name === email) {
+            return true;
+        }
+    }
+    return false;
+};
+var notEmpty = function (item) {
+    if (item) {
+        return item;
+    }
+    else {
+        throw new Error("Empty property " + item);
+    }
+};
+
+var FormDom = /** @class */ (function () {
+    function FormDom(elem) {
+        var _this = this;
+        this.setFocusInput = function (e) {
+            if (e &&
+                _this.inputElement &&
+                e.target.className.indexOf('emails-editor_input') === -1 &&
+                e.target.className.indexOf('emails-editor_closebtn') === -1 &&
+                e.target.className.indexOf('emails-editor_email') === -1) {
+                _this.inputElement.focus();
+            }
+        };
+        this.onInput = function (e) {
+            var _a;
+            var value = (_a = e.target) === null || _a === void 0 ? void 0 : _a.value;
+            _this.inputElement.style.width = 2 + _this.getTextWidth(value) + 'px';
+            if (value) {
+                _this.placeholderElement.style.display = 'none';
+            }
+            else if (_this.placeholderElement.style.display === 'none') {
+                _this.placeholderElement.style.display = 'inline-block';
+            }
+        };
+        this.getTextWidth = function (value) {
+            if (value === void 0) { value = ''; }
+            _this.hideElementWidthForInput.innerHTML = value;
+            return _this.hideElementWidthForInput.offsetWidth;
+        };
+        this.addEmailDOM = function (email) {
+            if (_this.wrapperForm) {
+                _this.wrapperForm.scrollTop = _this.wrapperForm.scrollHeight;
+            }
+            var newElement = document.createElement('span');
+            newElement.innerHTML = email.name;
+            newElement.className = "emails-editor_email emails-editor_email__" + (email.isValid ? 'valid' : 'invalid');
+            newElement.dataset.emailName = email.name;
+            var newDeleteItemElement = document.createElement('span');
+            newDeleteItemElement.innerHTML = '&times;';
+            newDeleteItemElement.className = 'emails-editor_closebtn';
+            newElement.appendChild(newDeleteItemElement);
+            _this.wrapperEmails.appendChild(newElement);
+        };
+        this.removeEmailDOM = function (name) {
+            var _a;
+            var item = _this.wrapperEmails.querySelector("[data-email-name=\"" + name + "\"]");
+            (_a = item === null || item === void 0 ? void 0 : item.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(item);
+        };
+        this.resetInput = function () {
+            _this.inputElement.value = '';
+            _this.inputElement.style.width = _this.getTextWidth() + 'px';
+            _this.placeholderElement.style.display = 'inline-block';
+        };
+        this.element = elem;
+        this.element.innerHTML =
+            '<div class="emails-editor_form">' +
+                '<span class="email-editor_wrapper-emails">' +
+                '</span>' +
+                '<input class="emails-editor_input" />' +
+                '<span class="emails-editor_fake-span">' +
+                '</span>' +
+                '<span class="emails-editor_placeholder">add more people…</span>' +
+                '</div>';
+        this.placeholderElement = notEmpty(this.element.querySelector('.emails-editor_placeholder'));
+        this.wrapperForm = notEmpty(this.element.querySelector('.emails-editor_form'));
+        this.inputElement = notEmpty(this.element.querySelector('.emails-editor_input'));
+        this.wrapperEmails = notEmpty(this.element.querySelector('.email-editor_wrapper-emails'));
+        this.hideElementWidthForInput = notEmpty(this.element.querySelector('.emails-editor_fake-span'));
+        this.wrapperForm.addEventListener('click', function (e) { return _this.setFocusInput(e); });
+        this.inputElement.addEventListener('input', function (e) { return _this.onInput(e); });
+    }
+    return FormDom;
+}());
 
 var CreateEmailForm = /** @class */ (function () {
     function CreateEmailForm(element) {
         var _this = this;
-        this.placeholderElement = null;
-        this.isEdit = false;
         this.emails = [];
-        this.updateDom = function (isRemove) {
-            if (isRemove === void 0) { isRemove = false; }
-            var wrapperElement = _this.element.querySelector('.email-editor_wrapper-emails');
-            if (wrapperElement) {
-                wrapperElement.innerHTML = _this.generateEmailsDom(isRemove);
-                var emailElements = _this.element.querySelectorAll('.emails-editor_closebtn');
-                for (var i = 0; i < emailElements.length; i++) {
-                    var emailElement = emailElements[i];
-                    emailElement.addEventListener('click', function (e) { return _this.removeEmail(e); });
-                }
-            }
-        };
-        this.generateEmailsDom = function (isRemove) {
-            if (isRemove === void 0) { isRemove = false; }
-            var emailDom = '';
-            _this.emails.map(function (item) {
-                emailDom +=
-                    "<span class=\"emails-editor_email emails-editor_email__" + (item.isValid ? 'valid' : 'invalid') + "\">" +
-                        item.name +
-                        '<span class="emails-editor_closebtn">&times;</span>' +
-                        '</span>';
-            });
-            if (!isRemove) {
-                var divForm = _this.element.querySelector('.emails-editor_form');
-                if (divForm) {
-                    divForm.scrollTop = divForm.scrollHeight;
-                }
-            }
-            return emailDom;
-        };
-        this.setFocusInput = function (e) {
-            var div = _this.element.querySelector('span.emails-editor_input');
-            if (e &&
-                e.target.className.indexOf('emails-editor_input') === -1 &&
-                e.target.className.indexOf('emails-editor_closebtn') === -1 &&
-                e.target.className.indexOf('emails-editor_email') === -1 &&
-                !_this.isEdit &&
-                div instanceof HTMLElement) {
-                _this.isEdit = true;
-                div.focus();
-                var range = document.createRange();
-                range.selectNodeContents(div);
-                range.collapse(false);
-                var sel = window.getSelection();
-                if (sel) {
-                    sel.removeAllRanges();
-                    sel.addRange(range);
-                }
-            }
-        };
-        this.onFocusInput = function () {
-            if (_this.placeholderElement) {
-                _this.placeholderElement.style.display = 'none';
-                _this.isEdit = false;
-            }
-        };
-        this.onChangeInput = function (e) {
+        this.onChange = function (e) {
             if (e) {
-                var value = e.target.innerText;
-                if (value.length === 1 && _this.checkEnterWord(value)) {
-                    var divInput = _this.element.querySelector('.emails-editor_input');
-                    if (divInput) {
-                        divInput.innerHTML = '';
-                    }
+                var value = e.target.value;
+                if (value.length === 1 && checkEnterLetter(value)) {
+                    _this.formDom.resetInput();
                 }
-                if (value && value.length > 1 && _this.checkEnterWord(value)) {
+                if (value && value.length > 1 && checkEnterLetter(value)) {
                     _this.addEmail(value);
                 }
             }
         };
-        this.onBlurInput = function (e) {
-            if (_this.placeholderElement) {
-                _this.placeholderElement.style.display = 'inline-block';
-            }
+        this.onBlur = function (e) {
             if (e) {
-                var email = e.target.innerText.replace(/(^\s*)|(\s*)$/g, '');
+                var email = e.target.value.replace(/(^\s*)|(\s*)$/g, '');
                 if (email) {
                     _this.addEmail(email);
                 }
             }
         };
-        this.checkEnterWord = function (value) {
-            return /[\s,]/g.test(value);
+        this.enterValuesToStore = function () {
+            if (_this.formDom.inputElement) {
+                var value = _this.formDom.inputElement.value;
+                console.log(value);
+                _this.addEmail(value);
+                _this.formDom.resetInput();
+            }
         };
         this.addEmail = function (email) {
             var inputEmails = email.replace(/(^\s*)|(\s*)$/g, '');
@@ -102,74 +142,38 @@ var CreateEmailForm = /** @class */ (function () {
             var newEmails = inputEmailsSplit.map(function (item) {
                 return {
                     name: item,
-                    isValid: _this.checkValid(item),
+                    isValid: checkValidEmail(item),
                 };
             });
             newEmails.map(function (item) {
-                if (!_this.checkForCoincidence(item.name)) {
+                if (!checkForRepeatedEmails(item.name, _this.emails)) {
                     _this.emails.push(item);
+                    _this.formDom.addEmailDOM(item);
+                    var itemDOM = _this.formDom.wrapperEmails.querySelector("[data-email-name=\"" + item.name + "\"]");
+                    itemDOM === null || itemDOM === void 0 ? void 0 : itemDOM.addEventListener('click', function (e) { return _this.removeEmail(e); });
                 }
             });
-            var divInput = _this.element.querySelector('.emails-editor_input');
-            if (divInput) {
-                divInput.innerHTML = '';
-            }
-            _this.updateDom();
-        };
-        this.checkValid = function (email) {
-            var pattern = new RegExp(checkregularEmail);
-            return pattern.test(email);
+            _this.formDom.resetInput();
         };
         this.removeEmail = function (e) {
             if (e) {
-                var email_1 = e.target.parentElement.innerHTML.split('<')[0];
+                var email_1 = e.target.parentElement.dataset.emailName;
                 _this.emails = _this.emails.filter(function (item) { return item.name !== email_1; });
-                _this.updateDom(true);
+                _this.formDom.removeEmailDOM(email_1);
             }
         };
-        this.checkForCoincidence = function (email) {
-            for (var i = 0; i < _this.emails.length; i++) {
-                if (_this.emails[i].name === email) {
-                    return true;
-                }
-            }
-            return false;
-        };
-        this.checkValidEmailsStore = function () {
-            return _this.emails.filter(function (item) { return item.isValid; });
-        };
-        this.element = element;
-        this.element.innerHTML =
-            '<div class="emails-editor_form">' +
-                '<span class="email-editor_wrapper-emails">' +
-                this.generateEmailsDom() +
-                '</span>' +
-                '<span class="emails-editor_input" contenteditable="true">' +
-                '</span>' +
-                '<span class="emails-editor_placeholder">add more people…</span>' +
-                '</div>';
-        this.placeholderElement = this.element.querySelector('.emails-editor_placeholder');
-        var divForm = this.element.querySelector('.emails-editor_form');
-        if (divForm) {
-            divForm.addEventListener('click', function (e) { return _this.setFocusInput(e); });
-        }
-        var divInput = this.element.querySelector('.emails-editor_input');
-        if (divInput) {
+        this.formDom = new FormDom(element);
+        if (this.formDom.inputElement) {
             // fix IE 11
             var inputEventType = /Trident/.test(navigator.userAgent) ? 'textinput' : 'input';
-            divInput.addEventListener(inputEventType, function (e) { return _this.onChangeInput(e); });
-            divInput.addEventListener('focus', function () { return _this.onFocusInput(); });
-            divInput.addEventListener('blur', function (e) { return _this.onBlurInput(e); });
-            divInput.addEventListener('keydown', function (e) {
-                if (e.key === 'Enter' ||
-                    ((e.ctrlKey || e.metaKey) && e.key === 'v')) {
-                    // for IE 11
-                    var divInput_1 = _this.element.querySelector('.emails-editor_input');
-                    if (divInput_1) {
-                        var inputText = divInput_1.innerHTML;
-                        inputText && _this.addEmail(inputText);
-                        divInput_1.innerHTML = '';
-                    }
+            this.formDom.inputElement.addEventListener(inputEventType, function (e) { return _this.onChange(e); });
+            this.formDom.inputElement.addEventListener('blur', function (e) { return _this.onBlur(e); });
+            this.formDom.inputElement.addEventListener('paste', function () {
+                _this.enterValuesToStore();
+            });
+            this.formDom.inputElement.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    _this.enterValuesToStore();
                 }
             });
         }
@@ -177,8 +181,8 @@ var CreateEmailForm = /** @class */ (function () {
     CreateEmailForm.prototype.setEmail = function (email) {
         this.addEmail(email);
     };
-    CreateEmailForm.prototype.getEmail = function () {
-        return this.checkValidEmailsStore().map(function (item) {
+    CreateEmailForm.prototype.getEmails = function () {
+        return checkValidationEmails(this.emails).map(function (item) {
             return item.name;
         });
     };

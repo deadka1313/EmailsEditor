@@ -1,4 +1,6 @@
-# EmailsEditor v0.1.1
+# EmailsEditor v0.2.0
+
+![example](./readmiImg/example.png)
 
 ## example code
 
@@ -30,11 +32,5 @@ const emailsEditor = new EmailsEditor(inputContainerNode);
 // send line for input
 emailsEditor.setEmail('email@mail.com');
 // get array valid emails
-emailsEditor.getEmail();
+emailsEditor.getEmails();
 ```
-
-## BAGS
-
-Elimination of a bug in the subject during the decision process
-
-1. if press enter in ie
