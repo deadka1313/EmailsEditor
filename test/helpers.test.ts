@@ -1,4 +1,10 @@
-import { checkValidEmail, checkEnterLetter, checkValidationEmails, checkForRepeatedEmails } from '../src/helpers';
+import {
+    checkValidEmail,
+    checkEnterLetter,
+    checkValidationEmails,
+    checkForRepeatedEmails,
+    notEmpty,
+} from '../src/helpers';
 import { IEmailIsValid } from '../src/core/IEmailIsValid';
 
 const emails: IEmailIsValid[] = [
@@ -60,5 +66,11 @@ describe('Test helpers', () => {
         expect(checkForRepeatedEmails('asdfhghjsd@dfg.', emails)).toBe(true);
         expect(checkForRepeatedEmails('mail@mail.comaaaaa', emails)).toBe(false);
         expect(checkForRepeatedEmails('mail@mail.comaaaaa', [])).toBe(false);
+    });
+
+    test('notEmpty', () => {
+        const item = 1;
+        expect(notEmpty(item)).toBe(item);
+        expect(() => notEmpty('')).toThrow();
     });
 });

@@ -22,9 +22,27 @@ describe('Test CreateEmailForm API', () => {
     });
 });
 
-describe('Test DOM', () => {
+describe('Test elements', () => {
     test('test snapshot', () => {
         const tree = document.createElement('div');
+        new CreateEmailForm(tree);
         expect(tree).toMatchSnapshot();
+    });
+
+    test('test DOM', () => {
+        const tree = document.createElement('div');
+        new CreateEmailForm(tree);
+
+        const placeholderElement = tree.querySelector('.emails-editor_placeholder');
+        const wrapperForm = tree.querySelector('.emails-editor_form');
+        const inputElement = tree.querySelector('.emails-editor_input');
+        const wrapperEmails = tree.querySelector('.email-editor_wrapper-emails');
+        const hideElementWidthForInput = tree.querySelector('.emails-editor_fake-span');
+
+        expect(placeholderElement).not.toBe(null);
+        expect(wrapperForm).not.toBe(null);
+        expect(inputElement).not.toBe(null);
+        expect(wrapperEmails).not.toBe(null);
+        expect(hideElementWidthForInput).not.toBe(null);
     });
 });
