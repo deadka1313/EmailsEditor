@@ -27,6 +27,6 @@ export const notEmpty = <T>(item: T): T => {
     if (item) {
         return item;
     } else {
-        throw new Error(`Empty property ${item}`);
+        throw new Error(`Empty property`);
     }
 };
