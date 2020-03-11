@@ -1,7 +1,7 @@
 import {
     checkValidEmail,
     checkEnterLetter,
-    checkValidationEmails,
+    checkIsValidationEmails,
     checkForRepeatedEmails,
     notEmpty,
 } from '../src/helpers';
@@ -58,7 +58,7 @@ describe('Test helpers', () => {
                 isValid: true,
             },
         ];
-        expect(checkValidationEmails(emails)).toMatchObject(validEmails);
+        expect(checkIsValidationEmails(true, emails)).toMatchObject(validEmails);
     });
 
     test('checkForRepeatedEmails', () => {

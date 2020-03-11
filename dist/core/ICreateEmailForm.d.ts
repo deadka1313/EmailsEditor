@@ -1,4 +1,5 @@
 export interface ICreateEmailForm {
     setEmail(email: string): void;
-    getEmails(): string[];
+    getEmails(isValid: boolean): string[];
+    replaceEmails(emails: string): void;
 }

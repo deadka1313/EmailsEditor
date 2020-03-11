@@ -10,8 +10,8 @@ export const checkEnterLetter = (word: string): boolean => {
     return /[\s,]/g.test(word);
 };
 
-export const checkValidationEmails = (emails: IEmailIsValid[]): IEmailIsValid[] => {
-    return emails.filter(item => item.isValid);
+export const checkIsValidationEmails = (isValid: boolean, emails: IEmailIsValid[]): IEmailIsValid[] => {
+    return emails.filter(item => isValid === item.isValid);
 };
 
 export const checkForRepeatedEmails = (email: string, emails: IEmailIsValid[]): boolean => {

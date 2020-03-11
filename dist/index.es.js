@@ -1,4 +1,5 @@
 var checkregularEmail = /^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i;
+//# sourceMappingURL=constants.js.map
 
 var checkValidEmail = function(email) {
   var pattern = new RegExp(checkregularEmail);
@@ -7,9 +8,9 @@ var checkValidEmail = function(email) {
 var checkEnterLetter = function(word) {
   return /[\s,]/g.test(word);
 };
-var checkValidationEmails = function(emails) {
+var checkIsValidationEmails = function(isValid, emails) {
   return emails.filter(function(item) {
-    return item.isValid;
+    return isValid === item.isValid;
   });
 };
 var checkForRepeatedEmails = function(email, emails) {
@@ -27,6 +28,7 @@ var notEmpty = function(item) {
     throw new Error("Empty property");
   }
 };
+//# sourceMappingURL=helpers.js.map
 
 var FormDom = /** @class */ (function() {
   function FormDom(elem) {
@@ -80,6 +82,16 @@ var FormDom = /** @class */ (function() {
         ? void 0
         : _a.removeChild(item);
     };
+    this.removeEmailsDOM = function() {
+      var items = Array.from(_this.wrapperEmails.querySelectorAll(".emails-editor_email"));
+      console.log(items);
+      items.map(function(item) {
+        var _a;
+        (_a = item === null || item === void 0 ? void 0 : item.parentNode) === null || _a === void 0
+          ? void 0
+          : _a.removeChild(item);
+      });
+    };
     this.resetInput = function() {
       _this.inputElement.value = "";
       _this.inputElement.style.width = 2 + _this.getTextWidth() + "px";
@@ -111,9 +123,16 @@ var FormDom = /** @class */ (function() {
 })();
 
 var CreateEmailForm = /** @class */ (function() {
-  function CreateEmailForm(element) {
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  function CreateEmailForm(element, callback) {
     var _this = this;
+    if (callback === void 0) {
+      callback = function() {};
+    }
     this.emails = [];
+    this.callCallback = function() {
+      _this.callback();
+    };
     this.onChange = function(e) {
       if (e) {
         var value = e.target.value;
@@ -136,7 +155,6 @@ var CreateEmailForm = /** @class */ (function() {
     this.enterValuesToStore = function() {
       if (_this.formDom.inputElement) {
         var value = _this.formDom.inputElement.value;
-        console.log(value);
         _this.addEmail(value);
         _this.formDom.resetInput();
       }
@@ -165,6 +183,7 @@ var CreateEmailForm = /** @class */ (function() {
               });
         }
       });
+      _this.callCallback();
       _this.formDom.resetInput();
     };
     this.removeEmail = function(e) {
@@ -174,7 +193,12 @@ var CreateEmailForm = /** @class */ (function() {
           return item.name !== email_1;
         });
         _this.formDom.removeEmailDOM(email_1);
+        _this.callCallback();
       }
+    };
+    this.removeEmails = function() {
+      _this.emails = [];
+      _this.formDom.removeEmailsDOM();
     };
     this.formDom = new FormDom(element);
     if (this.formDom.inputElement) {
@@ -195,14 +219,22 @@ var CreateEmailForm = /** @class */ (function() {
         }
       });
     }
+    this.callback = callback;
   }
   CreateEmailForm.prototype.setEmail = function(email) {
     this.addEmail(email);
   };
-  CreateEmailForm.prototype.getEmails = function() {
-    return checkValidationEmails(this.emails).map(function(item) {
+  CreateEmailForm.prototype.getEmails = function(isValid) {
+    if (isValid === void 0) {
+      isValid = true;
+    }
+    return checkIsValidationEmails(isValid, this.emails).map(function(item) {
       return item.name;
     });
+  };
+  CreateEmailForm.prototype.replaceEmails = function(emails) {
+    this.removeEmails();
+    this.addEmail(emails);
   };
   return CreateEmailForm;
 })();

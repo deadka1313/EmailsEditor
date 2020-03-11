@@ -32,7 +32,7 @@
         <script type="text/javascript" src="../dist/index.min.js"></script>
         <script>
             const inputContainerNode = document.querySelector('#emails-input');
-            const emailsEditor = new EmailsEditor(inputContainerNode);
+            const emailsEditor = new EmailsEditor(inputContainerNode, callback);
             function setEmail() {
                 let chars = 'abcdefghijklmnopqrstuvwxyz1234567890';
                 let email = '';
@@ -42,9 +42,13 @@
                 }
                 emailsEditor.setEmail(email +'@mail.com');
             }
+
+            function callback() {
+                console.log('changed')
+            }
             function getEmails() {
                 const emails =  emailsEditor.getEmails();
-                let emailsAlertString = emailsEditor.getEmails().length + ' valid emails \n';
+                let emailsAlertString = emails.length + ' valid emails \n';
                 for( let i = 0; i < emails.length; i++) {
                     emailsAlertString += ' ' + emails[i];
                 }

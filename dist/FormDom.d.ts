@@ -12,5 +12,6 @@ export default class FormDom {
     readonly wrapperEmails: HTMLElement;
     addEmailDOM: (email: IEmailIsValid) => void;
     removeEmailDOM: (name: string) => void;
+    removeEmailsDOM: () => void;
     resetInput: () => void;
 }
