@@ -1,13 +1,19 @@
 import './index.sass';
 import { ICreateEmailForm } from './core/ICreateEmailForm';
 import { IEmailIsValid } from './core/IEmailIsValid';
-import { checkEnterLetter, checkForRepeatedEmails, checkValidationEmails, checkValidEmail } from './helpers';
+import { checkEnterLetter, checkForRepeatedEmails, checkIsValidationEmails, checkValidEmail } from './helpers';
 import FormDom from './FormDom';
 
 export default class CreateEmailForm implements ICreateEmailForm {
     private formDom: FormDom;
 
     private emails: IEmailIsValid[] = [];
+
+    private callback: () => void;
+
+    private callCallback = (): void => {
+        this.callback();
+    };
 
     private onChange = (e: Event | null): void => {
         if (e) {
@@ -33,7 +39,6 @@ export default class CreateEmailForm implements ICreateEmailForm {
     private enterValuesToStore = (): void => {
         if (this.formDom.inputElement) {
             const value = this.formDom.inputElement.value;
-            console.log(value);
             this.addEmail(value);
             this.formDom.resetInput();
         }
@@ -57,7 +62,7 @@ export default class CreateEmailForm implements ICreateEmailForm {
                 itemDOM?.addEventListener('click', e => this.removeEmail(e));
             }
         });
-
+        this.callCallback();
         this.formDom.resetInput();
     };
 
@@ -66,10 +71,17 @@ export default class CreateEmailForm implements ICreateEmailForm {
             const email = ((e.target as HTMLTextAreaElement).parentElement as HTMLElement).dataset.emailName as string;
             this.emails = this.emails.filter(item => item.name !== email);
             this.formDom.removeEmailDOM(email);
+            this.callCallback();
         }
     };
 
-    constructor(element: HTMLElement) {
+    private removeEmails = (): void => {
+        this.emails = [];
+        this.formDom.removeEmailsDOM();
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    constructor(element: HTMLElement, callback: () => void = (): void => {}) {
         this.formDom = new FormDom(element);
 
         if (this.formDom.inputElement) {
@@ -87,15 +99,22 @@ export default class CreateEmailForm implements ICreateEmailForm {
                 }
             });
         }
+
+        this.callback = callback;
     }
 
     public setEmail(email: string): void {
         this.addEmail(email);
     }
 
-    public getEmails(): string[] {
-        return checkValidationEmails(this.emails).map(item => {
+    public getEmails(isValid = true): string[] {
+        return checkIsValidationEmails(isValid, this.emails).map(item => {
             return item.name;
         });
+    }
+
+    public replaceEmails(emails: string): void {
+        this.removeEmails();
+        this.addEmail(emails);
     }
 }

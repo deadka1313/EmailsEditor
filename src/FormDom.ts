@@ -83,6 +83,14 @@ export default class FormDom {
         item?.parentNode?.removeChild(item);
     };
 
+    removeEmailsDOM = (): void => {
+        const items = Array.from(this.wrapperEmails.querySelectorAll('.emails-editor_email'));
+        console.log(items);
+        items.map(item => {
+            item?.parentNode?.removeChild(item);
+        });
+    };
+
     resetInput = (): void => {
         this.inputElement.value = '';
         this.inputElement.style.width = 2 + this.getTextWidth() + 'px';

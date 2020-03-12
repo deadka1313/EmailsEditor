@@ -25,12 +25,16 @@ Build library hotreload
 ## usages
 
 ```javascript
-const emailsEditor = new EmailsEditor(inputContainerNode);
+export { EmailsEditor } from './EmailsEditor';
+//
+// callback subscribe to changed
+const emailsEditor = new EmailsEditor(inputContainerNode, callback);
 
 // API
 
 // send line for input
 emailsEditor.setEmail('email@mail.com');
-// get array valid emails
-emailsEditor.getEmails();
+// get array valid or invalid emails
+// default isValid = true
+emailsEditor.getEmails(isValid);
 ```
